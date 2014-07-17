@@ -60,7 +60,7 @@ struct TrackingData
 // define the node and display window name
 static const std::string NODE_NAME = "pupil tracking";
 static const std::string DISPLAY_WINDOW_NAME = "pupil tracking";
-static const std::string SUBSCRIBE_TOPIC_NAME = "/camera/image";
+std::string SUBSCRIBE_TOPIC_NAME = "/camera/image";
 
 // define node settings
 bool DISPLAY_RESULT = true;
@@ -173,6 +173,7 @@ int main(int argc, char** argv)
     ros::NodeHandle n("~");
 
     // obtain parameters (don't forget to use a leading '_' when running via command line)
+    n.param("topic", SUBSCRIBE_TOPIC_NAME, "/camera/image");
     n.param("display", DISPLAY_RESULT, true);
 
     // subscribe to the image stream
