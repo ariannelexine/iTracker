@@ -2,7 +2,7 @@
  * @FILE main.cpp
  * @BRIEF USB implementation of the robust pupil tracker by Lech Swirski
  *
- * USB implementation of the robust pupil tracker by Lech Swirski 
+ * USB implementation of the robust pupil tracker by Lech Swirski
  * http://www.cl.cam.ac.uk/research/rainbow/projects/pupiltracking/
  *
  * @AUTHOR Christopher D. McMurrough
@@ -93,7 +93,7 @@ void closeCamera(CvCapture* capture)
  * @PARAM[in] flipImage flips the image vertically if true
  * @AUTHOR Christopher D. McMurrough
  **********************************************************************************************************************/
-bool getImageFrame(CvCapture *capture, IplImage* rawImage, bool flipImage)
+bool getImageFrame(CvCapture* capture, IplImage* &rawImage, bool flipImage)
 {
     // get the raw image
     IplImage* frame = cvQueryFrame(capture);
