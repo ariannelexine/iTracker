@@ -1,16 +1,13 @@
-/***********************************************************************************************************************
-FILENAME:   main.cpp
-AUTHORS:    Christopher D. McMurrough
+/*******************************************************************************************************************//**
+ * @FILE main.cpp
+ * @BRIEF USB implementation of the robust pupil tracker by Lech Swirski
+ *
+ * USB implementation of the robust pupil tracker by Lech Swirski 
+ * http://www.cl.cam.ac.uk/research/rainbow/projects/pupiltracking/
+ *
+ * @AUTHOR Christopher D. McMurrough
+ **********************************************************************************************************************/
 
-DESCRIPTION:
-USB implementation of the robust pupil tracker by Lech Swirski
-http://www.cl.cam.ac.uk/research/rainbow/projects/pupiltracking/
-
-REVISION HISTORY:
-10.30.2012   CDM     original file creation
-***********************************************************************************************************************/
-
-// include necessary dependencies
 #include <iostream>
 #include <stdio.h>
 #include <time.h>
@@ -57,10 +54,12 @@ struct TrackingData
     float dv_y;
 };
 
-/***********************************************************************************************************************
-CvCapture* initializeCamera(int cameraIndex)
-initialize the camera capture, cameraIndex is the USB camera number
-***********************************************************************************************************************/
+/*******************************************************************************************************************//**
+ * @BRIEF Open the capture input source
+ * @PARAM[in] cameraIndex index of the camera to open
+ * @RETURN the opened CvCapture source
+ * @AUTHOR Christopher D. McMurrough
+ **********************************************************************************************************************/
 CvCapture* initializeCamera(int cameraIndex)
 {
     CvCapture* capture = cvCaptureFromCAM(cameraIndex);
@@ -69,7 +68,7 @@ CvCapture* initializeCamera(int cameraIndex)
 
     if (!capture)
     {
-        fprintf( stderr, "ERROR: unable to initialize camera %d \n", cameraIndex);
+        fprintf(stderr, "ERROR: unable to initialize camera %d \n", cameraIndex);
         return NULL;
     }
 
@@ -77,23 +76,27 @@ CvCapture* initializeCamera(int cameraIndex)
     return capture;
 }
 
-/***********************************************************************************************************************
-void closeCamera(CvCapture* capture)
-close a camera capture
-***********************************************************************************************************************/
+/*******************************************************************************************************************//**
+ * @BRIEF Close the capture input source
+ * @PARAM[in] capture the input CvCapture image source to close
+ * @AUTHOR Christopher D. McMurrough
+ **********************************************************************************************************************/
 void closeCamera(CvCapture* capture)
 {
     cvReleaseCapture(&capture);
 }
 
-/***********************************************************************************************************************
-bool getImageFrame(CvCapture* pupilCapture, IplImage*& rawImage, bool flipImage)
-get the pupil image from the capture object
-***********************************************************************************************************************/
-bool getImageFrame(CvCapture* pupilCapture, IplImage*& rawImage, bool flipImage)
+/*******************************************************************************************************************//**
+ * @BRIEF Acquire a pupil image from an CvCapture source
+ * @PARAM[in] capture the input CvCapture image source
+ * @PARAM[out] imageOut the output pupil image
+ * @PARAM[in] flipImage flips the image vertically if true
+ * @AUTHOR Christopher D. McMurrough
+ **********************************************************************************************************************/
+bool getImageFrame(CvCapture *capture, IplImage* rawImage, bool flipImage)
 {
     // get the raw image
-    IplImage* frame = cvQueryFrame(pupilCapture);
+    IplImage* frame = cvQueryFrame(capture);
     //IplImage* frame = cvLoadImage("eye.jpg");
 
     // return false if no image was acquired
@@ -111,11 +114,13 @@ bool getImageFrame(CvCapture* pupilCapture, IplImage*& rawImage, bool flipImage)
     return true;
 }
 
-/***********************************************************************************************************************
-void processImage(IplImage* rawImage, TrackingData *result)
-attempt to fit a pupil ellipse in the eye image frame
-***********************************************************************************************************************/
-void processImage(IplImage* rawImage, TrackingData *result)
+/*******************************************************************************************************************//**
+ * @BRIEF Attempt to fit a pupil ellipse in the eye image frame
+ * @PARAM[in] imageIn the input OpenCV image
+ * @PARAM[out] result the output tracking data
+ * @AUTHOR Christopher D. McMurrough
+ **********************************************************************************************************************/
+void processImage(const IplImage* rawImage, TrackingData *result)
 {
     cv::Mat m(rawImage);
 
@@ -171,10 +176,16 @@ void processImage(IplImage* rawImage, TrackingData *result)
 	}
 }
 
-/***********************************************************************************************************************
-int main(int argc, char **argv)
-program entry point, expects the camera index as command line arguments
-***********************************************************************************************************************/
+/*******************************************************************************************************************//**
+ * @BRIEF Program entry point
+ *
+ * Handles image processing and display of annotated results
+ *
+ * @PARAM[in] argc command line argument count
+ * @PARAM[in] argv command line argument vector
+ * @RETURNS return status
+ * @AUTHOR Christopher D. McMurrough
+ **********************************************************************************************************************/
 int main(int argc, char **argv)
 {
     // store video capture parameters
