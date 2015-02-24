@@ -31,8 +31,8 @@ float cvx::histKmeans(const cv::Mat_<float>& hist, int bin_min, int bin_max, int
 	CV_Assert( hist.rows == 1 || hist.cols == 1 && K > 0 );
 
 	labels = cv::Mat_<uchar>::zeros(hist.size());
-	int nbins = hist.total();
-	float binWidth = (bin_max - bin_min)/nbins;
+	int nbins = static_cast<int>(hist.total());
+	float binWidth = static_cast<float>(bin_max - bin_min) / static_cast<float>(nbins);
 	float binStart = bin_min + binWidth/2;
 
 	cv::Mat_<float> centres(K, 1, init_centres, 4);
@@ -123,8 +123,8 @@ cv::RotatedRect cvx::fitEllipse(const cv::Moments& m)
 {
 	cv::RotatedRect ret;
 
-	ret.center.x = m.m10/m.m00;
-	ret.center.y = m.m01/m.m00;
+	ret.center.x = static_cast<float>(m.m10/m.m00);
+	ret.center.y = static_cast<float>(m.m01/m.m00);
 
 	double mu20 = m.m20/m.m00 - ret.center.x*ret.center.x;
 	double mu02 = m.m02/m.m00 - ret.center.y*ret.center.y;
@@ -132,8 +132,8 @@ cv::RotatedRect cvx::fitEllipse(const cv::Moments& m)
 
 	double common = std::sqrt(sq(mu20 - mu02) + 4*sq(mu11));
 
-	ret.size.width = std::sqrt(2*(mu20 + mu02 + common));
-	ret.size.height = std::sqrt(2*(mu20 + mu02 - common));
+	ret.size.width = static_cast<float>(std::sqrt(2*(mu20 + mu02 + common)));
+	ret.size.height = static_cast<float>(std::sqrt(2*(mu20 + mu02 - common)));
 
 	double num, den;
 	if (mu02 > mu20) {
@@ -148,11 +148,11 @@ cv::RotatedRect cvx::fitEllipse(const cv::Moments& m)
 	if (num == 0 && den == 0)
 		ret.angle = 0;
 	else
-		ret.angle = (180/PI) * std::atan2(num,den);
+		ret.angle = static_cast<float>((180/PI) * std::atan2(num,den));
 
 	return ret;
 }
 cv::Vec2f cvx::majorAxis(const cv::RotatedRect& ellipse)
 {
-	return cv::Vec2f(ellipse.size.width*std::cos(PI/180*ellipse.angle), ellipse.size.width*std::sin(PI/180*ellipse.angle));
+	return cv::Vec2f(static_cast<float>(ellipse.size.width*std::cos(PI/180*ellipse.angle)), static_cast<float>(ellipse.size.width*std::sin(PI/180*ellipse.angle)));
 }
