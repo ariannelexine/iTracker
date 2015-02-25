@@ -44,11 +44,11 @@ CvScalar COLOR_YELLOW = CV_RGB(255, 255, 0);
 // define the result struct
 struct TrackingData
 {
-	cv::Point2f pupil_center;
-	float pupil_radius;
-	cv::Point2f cr_center;
-	float cr_radius;
-	cv::RotatedRect ellipse_rectangle;
+    cv::Point2f pupil_center;
+    float pupil_radius;
+    cv::Point2f cr_center;
+    float cr_radius;
+    cv::RotatedRect ellipse_rectangle;
 };
 
 /**********************************************************************************************************************
@@ -60,39 +60,39 @@ struct TrackingData
  *********************************************************************************************************************/
 bool processImage(const cv::Mat& imageIn, TrackingData& result)
 {
-	// set the tracking parameters for this frame
-	PupilTracker::TrackerParams params;
-	params.Radius_Min = MIN_RADIUS;
-	params.Radius_Max = MAX_RADIUS;
-	params.CannyBlur = CANNY_BLUR;
-	params.CannyThreshold1 = CANNY_THRESH_1;
-	params.CannyThreshold2 = CANNY_THRESH_2;
-	params.StarburstPoints = STARBURST_POINTS;
-	params.PercentageInliers = PERCENT_INLIERS;
-	params.InlierIterations = INLIER_ITERATIONS;
-	params.ImageAwareSupport = IMAGE_AWARE_SUPPORT;
-	params.EarlyTerminationPercentage = EARLY_TERMINATION_PERCENTAGE;
-	params.EarlyRejection = EARLY_REJECTION;
-	params.Seed = SEED_VALUE;
+    // set the tracking parameters for this frame
+    PupilTracker::TrackerParams params;
+    params.Radius_Min = MIN_RADIUS;
+    params.Radius_Max = MAX_RADIUS;
+    params.CannyBlur = CANNY_BLUR;
+    params.CannyThreshold1 = CANNY_THRESH_1;
+    params.CannyThreshold2 = CANNY_THRESH_2;
+    params.StarburstPoints = STARBURST_POINTS;
+    params.PercentageInliers = PERCENT_INLIERS;
+    params.InlierIterations = INLIER_ITERATIONS;
+    params.ImageAwareSupport = IMAGE_AWARE_SUPPORT;
+    params.EarlyTerminationPercentage = EARLY_TERMINATION_PERCENTAGE;
+    params.EarlyRejection = EARLY_REJECTION;
+    params.Seed = SEED_VALUE;
 
-	// perform the pupil ellipse fitting
-	PupilTracker::findPupilEllipse_out out;
-	tracker_log log;
-	if(PupilTracker::findPupilEllipse(params, imageIn, out, log))
-	{
-		// package the result in the pupil data structure
-		result.pupil_center = out.pPupil;
-		result.pupil_radius = 1;
-		result.cr_center = out.pPupil;
-		result.cr_radius = 1;
-		result.ellipse_rectangle = out.elPupil;
-		return true;
-	}
-	else
-	{
-		// return false if tracking was not successful
-		return false;
-	}
+    // perform the pupil ellipse fitting
+    PupilTracker::findPupilEllipse_out out;
+    tracker_log log;
+    if(PupilTracker::findPupilEllipse(params, imageIn, out, log))
+    {
+        // package the result in the pupil data structure
+        result.pupil_center = out.pPupil;
+        result.pupil_radius = 1;
+        result.cr_center = out.pPupil;
+        result.cr_radius = 1;
+        result.ellipse_rectangle = out.elPupil;
+        return true;
+    }
+    else
+    {
+        // return false if tracking was not successful
+        return false;
+    }
 }
 
 /**********************************************************************************************************************
@@ -107,115 +107,115 @@ bool processImage(const cv::Mat& imageIn, TrackingData& result)
  *********************************************************************************************************************/
 int main(int argc, char** argv)
 {
-	// store video capture parameters
-	int cameraIndex = 0;
-	bool displayMode = true;
-	bool flipDisplay = false;
-	bool isRunning = true;
+    // store video capture parameters
+    int cameraIndex = 0;
+    bool displayMode = true;
+    bool flipDisplay = false;
+    bool isRunning = true;
 
-	// validate and parse the command line arguments
-	if(argc != NUM_COMNMAND_LINE_ARGUMENTS + 1)
-	{
-		printf("USAGE: <camera_index> <display_mode>\n");
-		printf("Running with default parameters... \n");
-	}
-	else
-	{
-		cameraIndex = atoi(argv[1]);
-		displayMode = atoi(argv[2]) > 0;
-		flipDisplay = atoi(argv[2]) == 2;
-	}
+    // validate and parse the command line arguments
+    if(argc != NUM_COMNMAND_LINE_ARGUMENTS + 1)
+    {
+        printf("USAGE: <camera_index> <display_mode>\n");
+        printf("Running with default parameters... \n");
+    }
+    else
+    {
+        cameraIndex = atoi(argv[1]);
+        displayMode = atoi(argv[2]) > 0;
+        flipDisplay = atoi(argv[2]) == 2;
+    }
 
-	// initialize the eye camera
-	cv::VideoCapture occulography(cameraIndex);
-	if(!occulography.isOpened())
-	{
-		printf("Unable to initialize camera %u!", cameraIndex);
-		return 0;
-	}
-	occulography.set(CV_CAP_PROP_FRAME_WIDTH, CAMERA_FRAME_WIDTH);
-	occulography.set(CV_CAP_PROP_FRAME_HEIGHT, CAMERA_FRAME_HEIGHT);
+    // initialize the eye camera
+    cv::VideoCapture occulography(cameraIndex);
+    if(!occulography.isOpened())
+    {
+        printf("Unable to initialize camera %u!", cameraIndex);
+        return 0;
+    }
+    occulography.set(CV_CAP_PROP_FRAME_WIDTH, CAMERA_FRAME_WIDTH);
+    occulography.set(CV_CAP_PROP_FRAME_HEIGHT, CAMERA_FRAME_HEIGHT);
 
-	// store the frame data
-	cv::Mat eyeImage;
-	struct TrackingData result;
-	bool trackingSuccess = false;
+    // store the frame data
+    cv::Mat eyeImage;
+    struct TrackingData result;
+    bool trackingSuccess = false;
 
-	// store the time between frames
-	int frameStartTicks, frameEndTicks, processStartTicks, processEndTicks;
-	float processTime, totalTime;
+    // store the time between frames
+    int frameStartTicks, frameEndTicks, processStartTicks, processEndTicks;
+    float processTime, totalTime;
 
-	// process data until program termination
-	while(isRunning)
-	{
-		// start the timer
-		frameStartTicks = clock();
+    // process data until program termination
+    while(isRunning)
+    {
+        // start the timer
+        frameStartTicks = clock();
 
-		// attempt to acquire an image frame
-		if(occulography.read(eyeImage))
-		{
-			// process the image frame
-			processStartTicks = clock();
-			trackingSuccess = processImage(eyeImage, result);
-			processEndTicks = clock();
-			processTime = ((float)(processEndTicks - processStartTicks)) / CLOCKS_PER_SEC;
+        // attempt to acquire an image frame
+        if(occulography.read(eyeImage))
+        {
+            // process the image frame
+            processStartTicks = clock();
+            trackingSuccess = processImage(eyeImage, result);
+            processEndTicks = clock();
+            processTime = ((float)(processEndTicks - processStartTicks)) / CLOCKS_PER_SEC;
 
-			if(trackingSuccess)
-			{
-				//std::printf("TRACKING SUCCESS\n");
-			}
-			else
-			{
-				//std::printf("TRACKING FAIL\n");
-			}
+            if(trackingSuccess)
+            {
+                //std::printf("TRACKING SUCCESS\n");
+            }
+            else
+            {
+                //std::printf("TRACKING FAIL\n");
+            }
 
-			// update the display
-			if(displayMode)
-			{
-				cv::Mat displayImage(eyeImage);
+            // update the display
+            if(displayMode)
+            {
+                cv::Mat displayImage(eyeImage);
 
-				// annotate the image if result is in range
-				if(cv::Rect(cv::Point(), displayImage.size()).contains(result.pupil_center))
-				{
-					cvx::cross(displayImage, result.pupil_center, 5, COLOR_RED);
-					cv::ellipse(displayImage, result.ellipse_rectangle, COLOR_GREEN);
-				}
+                // annotate the image if result is in range
+                if(cv::Rect(cv::Point(), displayImage.size()).contains(result.pupil_center))
+                {
+                    cvx::cross(displayImage, result.pupil_center, 5, COLOR_RED);
+                    cv::ellipse(displayImage, result.ellipse_rectangle, COLOR_GREEN);
+                }
 
-				if(flipDisplay)
-				{
-					// annotate the image
-					cv::Mat displayFlipped;
-					cv::flip(displayImage, displayFlipped, 1);
-					cv::imshow("eyeImage", displayFlipped);
+                if(flipDisplay)
+                {
+                    // annotate the image
+                    cv::Mat displayFlipped;
+                    cv::flip(displayImage, displayFlipped, 1);
+                    cv::imshow("eyeImage", displayFlipped);
 
-					// display the annotated image
-					isRunning = cv::waitKey(1) != 'q';
-					displayFlipped.release();
-				}
-				else
-				{
-					// display the annotated image
-					cv::imshow("eyeImage", displayImage);
-					isRunning = cv::waitKey(1) != 'q';
-				}
+                    // display the annotated image
+                    isRunning = cv::waitKey(1) != 'q';
+                    displayFlipped.release();
+                }
+                else
+                {
+                    // display the annotated image
+                    cv::imshow("eyeImage", displayImage);
+                    isRunning = cv::waitKey(1) != 'q';
+                }
 
-				// release display image
-				displayImage.release();
-			}
-		}
-		else
-		{
-			printf("WARNING: Unable to capture image from source!\n");
-			continue;
-		}
+                // release display image
+                displayImage.release();
+            }
+        }
+        else
+        {
+            printf("WARNING: Unable to capture image from source!\n");
+            continue;
+        }
 
-		// stop the timer and print the elapsed time
-		frameEndTicks = clock();
-		totalTime = ((float) (frameEndTicks - frameStartTicks)) / CLOCKS_PER_SEC;
-		printf("Processing time (pupil, total) (result x,y): %.4f %.4f - %.2f %.2f\n", processTime, totalTime, result.pupil_center.x, result.pupil_center.y);
-	}
+        // stop the timer and print the elapsed time
+        frameEndTicks = clock();
+        totalTime = ((float) (frameEndTicks - frameStartTicks)) / CLOCKS_PER_SEC;
+        printf("Processing time (pupil, total) (result x,y): %.4f %.4f - %.2f %.2f\n", processTime, totalTime, result.pupil_center.x, result.pupil_center.y);
+    }
 
-	// release the video source before exiting
-	occulography.release();
+    // release the video source before exiting
+    occulography.release();
 }
 
