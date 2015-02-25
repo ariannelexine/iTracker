@@ -12,8 +12,8 @@
 #include <stdio.h>
 #include <time.h>
 #include <opencv/highgui.h>
-#include "lib/PupilTracker.h"
-#include "lib/cvx.h"
+#include "swirski_pupil/PupilTracker.h"
+#include "swirski_pupil/cvx.h"
 
 // configuration parameters
 #define NUM_COMNMAND_LINE_ARGUMENTS 2
@@ -116,8 +116,8 @@ int main(int argc, char** argv)
     // validate and parse the command line arguments
     if(argc != NUM_COMNMAND_LINE_ARGUMENTS + 1)
     {
-        printf("USAGE: <camera_index> <display_mode>\n");
-        printf("Running with default parameters... \n");
+        std::printf("USAGE: <camera_index> <display_mode>\n");
+        std::printf("Running with default parameters... \n");
     }
     else
     {
@@ -130,7 +130,7 @@ int main(int argc, char** argv)
     cv::VideoCapture occulography(cameraIndex);
     if(!occulography.isOpened())
     {
-        printf("Unable to initialize camera %u!", cameraIndex);
+        std::printf("Unable to initialize camera %u!", cameraIndex);
         return 0;
     }
     occulography.set(CV_CAP_PROP_FRAME_WIDTH, CAMERA_FRAME_WIDTH);
@@ -212,7 +212,7 @@ int main(int argc, char** argv)
         // stop the timer and print the elapsed time
         frameEndTicks = clock();
         totalTime = ((float) (frameEndTicks - frameStartTicks)) / CLOCKS_PER_SEC;
-        printf("Processing time (pupil, total) (result x,y): %.4f %.4f - %.2f %.2f\n", processTime, totalTime, result.pupil_center.x, result.pupil_center.y);
+        std::printf("Processing time (pupil, total) (result x,y): %.4f %.4f - %.2f %.2f\n", processTime, totalTime, result.pupil_center.x, result.pupil_center.y);
     }
 
     // release the video source before exiting
