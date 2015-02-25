@@ -64,25 +64,6 @@ ELSE(WIN32)
     file(GLOB tbb RELATIVE ${TBB_LIBRARY_DIRS} ${TBB_LIBRARY_DIRS}/*.lib)
 ENDIF(WIN32)
 
-#set(FIND_TBB true)
-#IF(FIND_TBB)
-#    message("FIND_TBB true, generating TBB configuration with FindTBB...")
-#
-#    set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/")
-#    find_package(TBB REQUIRED)
-
-    # find the appropriate subdirectories
-#    message("TBB_INCLUDE_DIRS: " ${TBB_INCLUDE_DIRS})
-#    message("TBB_LIBRARY_DIRS: " ${TBB_LIBRARY_DIRS})
-#    include_directories(${TBB_INCLUDE_DIRS})
-#    link_directories(${TBB_LIBRARY_DIRS})
-    
-    # find the TBB libs
-#    file(GLOB TBB_LBRARIES RELATIVE ${TBB_LIBRARY_DIRS} ${TBB_LIBRARY_DIRS}/libtbb*)
-#    message("TBB_LIBRARIES: " ${TBB_LBRARIES})
-#    set(tbb ${TBB_LIBRARIES})
-#ENDIF(FIND_TBB)
-
 add_executable (pupil_tracker main.cpp)
 add_library (pupil_lib lib/PupilTracker.cpp lib/cvx.cpp lib/utils.cpp)
 target_link_libraries(pupil_tracker pupil_lib ${OpenCV_LIBS} tbb)
