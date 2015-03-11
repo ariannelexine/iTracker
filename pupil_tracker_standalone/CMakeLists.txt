@@ -17,7 +17,7 @@ ENDIF(UNIX)
 
 # configure boost
 IF(WIN32)
-    find_package(Boost 1.50.0 COMPONENTS random) 
+    find_package(Boost 1.55.0 COMPONENTS random) 
     INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIR})
     LINK_DIRECTORIES(${Boost_LIBRARY_DIRS})
 ELSE(WIN32)
@@ -28,9 +28,9 @@ ENDIF(WIN32)
 IF(WIN32)
     message("Windows platform detected, generating OpenCV configuration...")
     
-    set(OPENCV_BUILD_DIR "C:/OpenCV/build/x64/vc10")
+    set(OPENCV_BUILD_DIR "C:/OpenCV/build/x64/vc12")
     set(OPENCV_INCLUDE_DIRS "C:/OpenCV/build/include;C:/OpenCV/build/include/opencv;C:/OpenCV/build/include/opencv2")
-    set(OPENCV_LIB_DIRS "C:/OpenCV/build/x64/vc10/lib")
+    set(OPENCV_LIB_DIRS "C:/OpenCV/build/x64/vc12/lib")
 
     # find all of the subdirectories in OPENCV_LIB_DIRS to include
     include_directories(${OPENCV_BUILD_DIR})
@@ -47,9 +47,9 @@ ENDIF(WIN32)
 
 # configure tbb
 IF(WIN32)
-    set(TBB_BUILD_DIR "C:/tbb43_20140724oss/bin;C:/tbb43_20140724oss/bin/intel64;C:/tbb43_20140724oss/bin/intel64/vc10")
-    set(TBB_INCLUDE_DIRS "C:/tbb43_20140724oss/include;C:/tbb43_20140724oss/include/tbb;C:/tbb43_20140724oss/include/serial")
-    set(TBB_LIBRARY_DIRS "C:/tbb43_20140724oss/lib/intel64/vc10")
+    set(TBB_BUILD_DIR "C:/tbb43_20150209oss/bin;C:/tbb43_20150209oss/bin/intel64;C:/tbb43_20150209oss/bin/intel64/vc12")
+    set(TBB_INCLUDE_DIRS "C:/tbb43_20150209oss/include;C:/tbb43_20150209oss/include/tbb;C:/tbb43_20150209oss/include/serial")
+    set(TBB_LIBRARY_DIRS "C:/tbb43_20150209oss/lib/intel64/vc12")
     include_directories(${TBB_BUILD_DIR})
     include_directories(${TBB_INCLUDE_DIRS})
     link_directories(${TBB_LIBRARY_DIRS})

@@ -1,0 +1,77 @@
+﻿Build started 3/10/2015 10:50:26 PM.
+     1>Project "C:\Users\murr\Documents\GitHub\APT\pupil_tracker_standalone\vs2013\swirski_lib.vcxproj" on node 2 (Build target(s)).
+     1>CustomBuild:
+         Building Custom Rule C:/Users/murr/Documents/GitHub/APT/pupil_tracker_standalone/CMakeLists.txt
+         CMake does not need to re-run because C:\Users\murr\Documents\GitHub\APT\pupil_tracker_standalone\vs2013\CMakeFiles\generate.stamp is up-to-date.
+       ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\x86_amd64\CL.exe /c /I"C:\Program Files\Boost\include" /IC:\OpenCV\build\x64\vc12 /IC:\OpenCV\build\include /IC:\OpenCV\build\include\opencv /IC:\OpenCV\build\include\opencv2 /IC:\tbb43_20150209oss\bin /IC:\tbb43_20150209oss\bin\intel64 /IC:\tbb43_20150209oss\bin\intel64\vc12 /IC:\tbb43_20150209oss\include /IC:\tbb43_20150209oss\include\tbb /IC:\tbb43_20150209oss\include\serial /nologo /W3 /WX- /O2 /Ob2 /D WIN32 /D _WINDOWS /D NDEBUG /D "CMAKE_INTDIR=\"Release\"" /D _MBCS /Gm- /EHsc /MD /GS /fp:precise /Zc:wchar_t /Zc:forScope /GR /Fo"swirski_lib.dir\Release\\" /Fd"swirski_lib.dir\Release\vc120.pdb" /Gd /TP /errorReport:prompt C:\Users\murr\Documents\GitHub\APT\pupil_tracker_standalone\swirski_pupil\PupilTracker.cpp C:\Users\murr\Documents\GitHub\APT\pupil_tracker_standalone\swirski_pupil\cvx.cpp C:\Users\murr\Documents\GitHub\APT\pupil_tracker_standalone\swirski_pupil\utils.cpp
+         PupilTracker.cpp
+         Unknown compiler version - please run the configure tests and report the results
+     1>C:\Users\murr\Documents\GitHub\APT\pupil_tracker_standalone\swirski_pupil\PupilTracker.cpp(688): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>C:\Users\murr\Documents\GitHub\APT\pupil_tracker_standalone\swirski_pupil\PupilTracker.cpp(777): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>c:\users\murr\documents\github\apt\pupil_tracker_standalone\swirski_pupil\ConicSection.h(47): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+                 c:\users\murr\documents\github\apt\pupil_tracker_standalone\swirski_pupil\ConicSection.h(45) : while compiling class template member function 'cv::Point_<float> ConicSection_<float>::algebraicGradientDir(cv::Point_<float>)'
+                 C:\Users\murr\Documents\GitHub\APT\pupil_tracker_standalone\swirski_pupil\PupilTracker.cpp(868) : see reference to function template instantiation 'cv::Point_<float> ConicSection_<float>::algebraicGradientDir(cv::Point_<float>)' being compiled
+                 C:\Users\murr\Documents\GitHub\APT\pupil_tracker_standalone\swirski_pupil\PupilTracker.cpp(865) : see reference to class template instantiation 'ConicSection_<float>' being compiled
+     1>c:\users\murr\documents\github\apt\pupil_tracker_standalone\swirski_pupil\utils.h(73): warning C4267: 'argument' : conversion from 'size_t' to 'unsigned int', possible loss of data
+                 C:\Users\murr\Documents\GitHub\APT\pupil_tracker_standalone\swirski_pupil\PupilTracker.cpp(678) : see reference to function template instantiation 'std::vector<cv::Point2f,std::allocator<_Ty>> randomSubset<cv::Point2f>(const std::vector<_Ty,std::allocator<_Ty>> &,unsigned __int64,unsigned int)' being compiled
+                 with
+                 [
+                     _Ty=cv::Point2f
+                 ]
+     1>c:\users\murr\documents\github\apt\pupil_tracker_standalone\swirski_pupil\utils.h(73): warning C4267: 'argument' : conversion from 'size_t' to 'int', possible loss of data
+     1>c:\users\murr\documents\github\apt\pupil_tracker_standalone\swirski_pupil\utils.h(51): warning C4267: 'argument' : conversion from 'size_t' to 'int', possible loss of data
+                 C:\Users\murr\Documents\GitHub\APT\pupil_tracker_standalone\swirski_pupil\PupilTracker.cpp(680) : see reference to function template instantiation 'std::vector<cv::Point2f,std::allocator<_Ty>> randomSubset<cv::Point2f>(const std::vector<_Ty,std::allocator<_Ty>> &,unsigned __int64)' being compiled
+                 with
+                 [
+                     _Ty=cv::Point2f
+                 ]
+     1>C:\Program Files\Boost\include\boost/lexical_cast.hpp(1328): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdio.h(356) : see declaration of 'sprintf'
+                 C:\Program Files\Boost\include\boost/lexical_cast.hpp(1325) : while compiling class template member function 'bool boost::detail::lexical_stream_limited_src<char_type,traits,false>::shl_real_type(double,char *,char *&)'
+                 C:\Program Files\Boost\include\boost/lexical_cast.hpp(1489) : see reference to function template instantiation 'bool boost::detail::lexical_stream_limited_src<char_type,traits,false>::shl_real_type(double,char *,char *&)' being compiled
+                 C:\Program Files\Boost\include\boost/lexical_cast.hpp(1970) : see reference to class template instantiation 'boost::detail::lexical_stream_limited_src<char_type,traits,false>' being compiled
+                 C:\Program Files\Boost\include\boost/lexical_cast.hpp(1921) : while compiling class template member function 'std::string boost::detail::lexical_cast_do_cast<Target,src>::lexical_cast_impl(const Source &)'
+                 with
+                 [
+                     Target=std::string
+         ,            Source=src
+                 ]
+                 C:\Program Files\Boost\include\boost/lexical_cast.hpp(2133) : see reference to function template instantiation 'std::string boost::detail::lexical_cast_do_cast<Target,src>::lexical_cast_impl(const Source &)' being compiled
+                 with
+                 [
+                     Target=std::string
+         ,            Source=src
+                 ]
+                 C:\Program Files\Boost\include\boost/lexical_cast.hpp(2133) : see reference to class template instantiation 'boost::detail::lexical_cast_do_cast<Target,src>' being compiled
+                 with
+                 [
+                     Target=std::string
+                 ]
+                 c:\users\murr\documents\github\apt\pupil_tracker_standalone\swirski_pupil\PupilTracker.h(22) : see reference to function template instantiation 'Target boost::lexical_cast<std::string,T>(const Source &)' being compiled
+                 with
+                 [
+                     Target=std::string
+         ,            T=int
+         ,            Source=int
+                 ]
+                 C:\Users\murr\Documents\GitHub\APT\pupil_tracker_standalone\swirski_pupil\PupilTracker.cpp(608) : see reference to function template instantiation 'void tracker_log::add<int>(const std::string &,const T &)' being compiled
+                 with
+                 [
+                     T=int
+                 ]
+         cvx.cpp
+         utils.cpp
+         Unknown compiler version - please run the configure tests and report the results
+         Generating Code...
+     1>c:\users\murr\documents\github\apt\pupil_tracker_standalone\swirski_pupil\pupiltracker.cpp(888): warning C4715: 'PupilTracker::findPupilEllipse' : not all control paths return a value
+       Lib:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\x86_amd64\Lib.exe /OUT:"C:\Users\murr\Documents\GitHub\APT\pupil_tracker_standalone\vs2013\Release\swirski_lib.lib" /NOLOGO /MACHINE:X64 swirski_lib.dir\Release\PupilTracker.obj
+         swirski_lib.dir\Release\cvx.obj
+         swirski_lib.dir\Release\utils.obj
+         swirski_lib.vcxproj -> C:\Users\murr\Documents\GitHub\APT\pupil_tracker_standalone\vs2013\Release\swirski_lib.lib
+     1>Done Building Project "C:\Users\murr\Documents\GitHub\APT\pupil_tracker_standalone\vs2013\swirski_lib.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:21.56
