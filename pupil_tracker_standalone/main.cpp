@@ -40,6 +40,7 @@ CvScalar COLOR_RED = CV_RGB(255, 0, 0);
 CvScalar COLOR_GREEN = CV_RGB(0, 255, 0);
 CvScalar COLOR_BLUE = CV_RGB(0, 0, 255);
 CvScalar COLOR_YELLOW = CV_RGB(255, 255, 0);
+CvScalar COLOR_MAGENTA = CV_RGB(255, 0, 255);
 
 // define the result struct
 struct TrackingData
@@ -177,9 +178,16 @@ int main(int argc, char** argv)
                 // annotate the image if result is in range
                 if(cv::Rect(cv::Point(), displayImage.size()).contains(result.pupil_center))
                 {
-                    cvx::cross(displayImage, result.pupil_center, 5, COLOR_RED);
-                    cv::ellipse(displayImage, result.ellipse_rectangle, COLOR_GREEN);
-                }
+					// draw the pupil center and boundary
+					cvx::cross(displayImage, result.pupil_center, 5, COLOR_RED);
+					cv::ellipse(displayImage, result.ellipse_rectangle, COLOR_RED);
+
+					// shade the pupil area
+					cv::Mat annotation(eyeImage.rows, eyeImage.cols, CV_8UC3, 0.0);
+					cv::ellipse(annotation, result.ellipse_rectangle, COLOR_MAGENTA, -1);
+					const double alpha = 0.7;
+					cv::addWeighted(displayImage, alpha, annotation, 1.0 - alpha, 0.0, displayImage);
+				}
 
                 if(flipDisplay)
                 {
@@ -194,7 +202,7 @@ int main(int argc, char** argv)
                 }
                 else
                 {
-                    // display the annotated image
+                    // display the image
                     cv::imshow("eyeImage", displayImage);
                     isRunning = cv::waitKey(1) != 'q';
                 }
