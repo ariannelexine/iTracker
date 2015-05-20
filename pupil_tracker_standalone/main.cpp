@@ -43,7 +43,7 @@ CvScalar COLOR_YELLOW = CV_RGB(255, 255, 0);
 CvScalar COLOR_MAGENTA = CV_RGB(255, 0, 255);
 
 // define the result struct
-struct TrackingData
+struct PupilData
 {
     cv::Point2f pupil_center;
     float pupil_radius;
@@ -59,7 +59,7 @@ struct TrackingData
  * @RETURN true if the a pupil was located in the image
  * @AUTHOR Christopher D. McMurrough
  *********************************************************************************************************************/
-bool processImage(const cv::Mat& imageIn, TrackingData& result)
+bool processImage(const cv::Mat& imageIn, PupilData& result)
 {
     // set the tracking parameters for this frame
     PupilTracker::TrackerParams params;
@@ -137,9 +137,18 @@ int main(int argc, char** argv)
     occulography.set(CV_CAP_PROP_FRAME_WIDTH, CAMERA_FRAME_WIDTH);
     occulography.set(CV_CAP_PROP_FRAME_HEIGHT, CAMERA_FRAME_HEIGHT);
 
+	// intialize the display window if necessary
+	if(displayMode)
+	{
+		cvNamedWindow("eyeImage", CV_WINDOW_NORMAL);
+		cvSetWindowProperty("eyeImage", CV_WND_PROP_FULLSCREEN, CV_WINDOW_NORMAL);
+		cvSetWindowProperty("eyeImage", CV_WND_PROP_AUTOSIZE, CV_WINDOW_NORMAL);
+		cvSetWindowProperty("eyeImage", CV_WND_PROP_ASPECTRATIO, CV_WINDOW_KEEPRATIO);
+	}
+
     // store the frame data
     cv::Mat eyeImage;
-    struct TrackingData result;
+    struct PupilData result;
     bool trackingSuccess = false;
 
     // store the time between frames
