@@ -1,9 +1,9 @@
 /**********************************************************************************************************************
  * @FILE main.cpp
- * @BRIEF USB implementation of the robust pupil tracker by Lech Swirski
+ * @BRIEF USB implementation of the canny pupil tracker
  *
- * USB implementation of the robust pupil tracker by Lech Swirski
- * http://www.cl.cam.ac.uk/research/rainbow/projects/pupiltracking/
+ * USB implementation of the canny pupil tracker by pupil-labs
+ * https://github.com/pupil-labs/pupil/
  *
  * @AUTHOR Christopher D. McMurrough
  *********************************************************************************************************************/
