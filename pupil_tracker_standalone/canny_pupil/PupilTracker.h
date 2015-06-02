@@ -26,23 +26,57 @@ class PupilTracker
 {
 private:
 
-	// define tracking result parameters
-	cv::Point2f m_ellipseCentroid;
-	cv::RotatedRect m_ellipseRectangle;
-	cv::Point2f m_crCenter;
-	float m_crRadius;
+    // define tracking result parameters
+    cv::Point2f m_ellipseCentroid;
+    cv::RotatedRect m_ellipseRectangle;
+    cv::Point2f m_crCenter;
+    float m_crRadius;
+
+    // define tracking processing variables
+    bool m_courseDetection = false;
+    int m_coarse_filter_min = 100;
+    int m_coarse_filter_max = 400;
+
+    int m_blur = 1;
+    int m_canny_thresh = 159;
+    int m_canny_ratio = 2;
+    int m_canny_aperture = 5;
+
+    int m_intensity_range = 11;
+    int m_bin_thresh = 0;
+
+    //int m_pupilIntensityOffset = 11;
+    int m_pupilIntensityOffset = 15;
+    int m_glintIntensityOffset = 5;
+
+    int m_min_contour_size = 80;
+
+    float m_inital_ellipse_fit_threshhold = static_cast<float>(1.8);
+    float m_min_ratio = 0.3f;
+    float m_pupil_min = 40.0f;
+    float m_pupil_max = 150.0f;
+    float m_target_size = 100.0f;
+    cv::Point2f m_strong_perimeter_ratio_range = cv::Point2f(0.8f, 1.1f);
+    cv::Point2f m_strong_area_ratio_range = cv::Point2f(0.6f, 1.1f);
+    cv::Point2f m_final_perimeter_ratio_range = cv::Point2f(0.6f, 1.2f);
+    float m_strong_prior = 0;
+
+    float m_confidence = 0;
+
+    // debug settings
+    const bool m_debug = true;
 
 public:
 
-	// constructors
-	PupilTracker();
+    // constructors
+    PupilTracker();
 
-	// accessors
-	cv::Point2f getEllipseCentroid();
-	cv::RotatedRect getEllipseRectangle();
+    // accessors
+    cv::Point2f getEllipseCentroid();
+    cv::RotatedRect getEllipseRectangle();
 
-	// utility functions
-	bool findPupil(const cv::Mat& imageIn);
+    // utility functions
+    bool findPupil(const cv::Mat& imageIn);
 };
 
 #endif // PUPIL_TRACKER_H

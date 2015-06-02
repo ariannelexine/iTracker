@@ -29,22 +29,6 @@
 #define CAMERA_EXPOSURE -6
 #define CAMERA_CONVERT_RGB false
 
-/*
-// define tracking parameters
-#define MIN_RADIUS 10;
-#define MAX_RADIUS 60
-#define CANNY_BLUR 1.6
-#define CANNY_THRESH_1 30
-#define CANNY_THRESH_2 50
-#define STARBURST_POINTS 0
-#define PERCENT_INLIERS 40
-#define INLIER_ITERATIONS 2
-#define IMAGE_AWARE_SUPPORT true
-#define EARLY_TERMINATION_PERCENTAGE 95
-#define EARLY_REJECTION true
-#define SEED_VALUE -1
-*/
-
 // color constants
 CvScalar COLOR_WHITE = CV_RGB(255, 255, 255);
 CvScalar COLOR_RED = CV_RGB(255, 0, 0);
@@ -66,9 +50,9 @@ CvScalar COLOR_MAGENTA = CV_RGB(255, 0, 255);
 int main(int argc, char** argv)
 {
     // validate and parse the command line arguments
-	int cameraIndex = 0;
-	bool displayMode = true;
-	bool flipDisplay = false;
+    int cameraIndex = 0;
+    bool displayMode = true;
+    bool flipDisplay = false;
     if(argc != NUM_COMNMAND_LINE_ARGUMENTS + 1)
     {
         std::printf("USAGE: <camera_index> <display_mode>\n");
@@ -82,35 +66,36 @@ int main(int argc, char** argv)
     }
 
     // initialize the eye camera video capture
-    cv::VideoCapture occulography(cameraIndex);
+    //cv::VideoCapture occulography(cameraIndex);
+cv::VideoCapture occulography("C:/Users/Murr/Documents/GitHub/APT/pupil_tracker_standalone/vs2013/Release/pupil_test.mp4");
     if(!occulography.isOpened())
     {
         std::printf("Unable to initialize camera %u! \n", cameraIndex);
         return 0;
     }
-	occulography.set(CV_CAP_PROP_FRAME_WIDTH, CAMERA_FRAME_WIDTH);
-	occulography.set(CV_CAP_PROP_FRAME_HEIGHT, CAMERA_FRAME_HEIGHT);
-	occulography.set(CV_CAP_PROP_FORMAT, CAMERA_FORMAT);
-	occulography.set(CV_CAP_PROP_FPS, CAMERA_FPS);
-	occulography.set(CV_CAP_PROP_BRIGHTNESS, CAMERA_BRIGHTNESS);
-	occulography.set(CV_CAP_PROP_CONTRAST, CAMERA_CONTRAST);
-	occulography.set(CV_CAP_PROP_SATURATION, CAMERA_SATURATION);
-	occulography.set(CV_CAP_PROP_HUE, CAMERA_HUE);
-	occulography.set(CV_CAP_PROP_GAIN, CAMERA_GAIN);
-	occulography.set(CV_CAP_PROP_EXPOSURE, CAMERA_EXPOSURE);
-	occulography.set(CV_CAP_PROP_CONVERT_RGB, CAMERA_CONVERT_RGB);
+    occulography.set(CV_CAP_PROP_FRAME_WIDTH, CAMERA_FRAME_WIDTH);
+    occulography.set(CV_CAP_PROP_FRAME_HEIGHT, CAMERA_FRAME_HEIGHT);
+    occulography.set(CV_CAP_PROP_FORMAT, CAMERA_FORMAT);
+    occulography.set(CV_CAP_PROP_FPS, CAMERA_FPS);
+    occulography.set(CV_CAP_PROP_BRIGHTNESS, CAMERA_BRIGHTNESS);
+    occulography.set(CV_CAP_PROP_CONTRAST, CAMERA_CONTRAST);
+    occulography.set(CV_CAP_PROP_SATURATION, CAMERA_SATURATION);
+    occulography.set(CV_CAP_PROP_HUE, CAMERA_HUE);
+    occulography.set(CV_CAP_PROP_GAIN, CAMERA_GAIN);
+    occulography.set(CV_CAP_PROP_EXPOSURE, CAMERA_EXPOSURE);
+    occulography.set(CV_CAP_PROP_CONVERT_RGB, CAMERA_CONVERT_RGB);
 
-	// intialize the display window if necessary
-	if(displayMode)
-	{
-		cvNamedWindow("eyeImage", CV_WINDOW_NORMAL);
-		cvSetWindowProperty("eyeImage", CV_WND_PROP_FULLSCREEN, CV_WINDOW_NORMAL);
-		cvSetWindowProperty("eyeImage", CV_WND_PROP_AUTOSIZE, CV_WINDOW_NORMAL);
-		cvSetWindowProperty("eyeImage", CV_WND_PROP_ASPECTRATIO, CV_WINDOW_KEEPRATIO);
-	}
+    // intialize the display window if necessary
+    if(displayMode)
+    {
+        cvNamedWindow("eyeImage", CV_WINDOW_NORMAL);
+        cvSetWindowProperty("eyeImage", CV_WND_PROP_FULLSCREEN, CV_WINDOW_NORMAL);
+        cvSetWindowProperty("eyeImage", CV_WND_PROP_AUTOSIZE, CV_WINDOW_NORMAL);
+        cvSetWindowProperty("eyeImage", CV_WND_PROP_ASPECTRATIO, CV_WINDOW_KEEPRATIO);
+    }
 
-	// create the pupil tracking object
-	PupilTracker tracker;
+    // create the pupil tracking object
+    PupilTracker tracker;
 
     // store the frame data
     cv::Mat eyeImage;
@@ -122,7 +107,7 @@ int main(int argc, char** argv)
     float processTime, totalTime;
 
     // process data until program termination
-	bool isRunning = true;
+    bool isRunning = true;
     while(isRunning)
     {
         // start the timer
@@ -137,7 +122,7 @@ int main(int argc, char** argv)
             processEndTicks = clock();
             processTime = ((float)(processEndTicks - processStartTicks)) / CLOCKS_PER_SEC;
 
-			// warn on tracking failure
+            // warn on tracking failure
             if(!trackingSuccess)
             {
                 std::printf("Unable to locate pupil! \n");
@@ -149,18 +134,18 @@ int main(int argc, char** argv)
                 cv::Mat displayImage(eyeImage);
 
                 // annotate the image if tracking was successful
-				if(trackingSuccess)
+                if(trackingSuccess)
                 {
-					// draw the pupil center and boundary
-					//cvx::cross(displayImage, result.pupil_center, 5, COLOR_RED);
-					cv::ellipse(displayImage, tracker.getEllipseRectangle(), COLOR_RED);
+                    // draw the pupil center and boundary
+                    //cvx::cross(displayImage, result.pupil_center, 5, COLOR_RED);
+                    cv::ellipse(displayImage, tracker.getEllipseRectangle(), COLOR_RED);
 
-					// shade the pupil area
-					cv::Mat annotation(eyeImage.rows, eyeImage.cols, CV_8UC3, 0.0);
-					cv::ellipse(annotation, tracker.getEllipseRectangle(), COLOR_MAGENTA, -1);
-					const double alpha = 0.7;
-					cv::addWeighted(displayImage, alpha, annotation, 1.0 - alpha, 0.0, displayImage);
-				}
+                    // shade the pupil area
+                    cv::Mat annotation(eyeImage.rows, eyeImage.cols, CV_8UC3, 0.0);
+                    cv::ellipse(annotation, tracker.getEllipseRectangle(), COLOR_MAGENTA, -1);
+                    const double alpha = 0.7;
+                    cv::addWeighted(displayImage, alpha, annotation, 1.0 - alpha, 0.0, displayImage);
+                }
 
                 if(flipDisplay)
                 {
@@ -186,14 +171,15 @@ int main(int argc, char** argv)
         }
         else
         {
-            printf("WARNING: Unable to capture image from source!\n");
+            std::printf("WARNING: Unable to capture image from source!\n");
+occulography.set(CV_CAP_PROP_POS_FRAMES, 0);
             continue;
         }
 
         // stop the timer and print the elapsed time
         frameEndTicks = clock();
-        totalTime = ((float) (frameEndTicks - frameStartTicks)) / CLOCKS_PER_SEC;
-		std::printf("Processing time (pupil, total) (result x,y): %.4f %.4f - %.2f %.2f\n", processTime, totalTime, tracker.getEllipseCentroid().x, tracker.getEllipseCentroid().y);
+        totalTime = ((float)(frameEndTicks - frameStartTicks)) / CLOCKS_PER_SEC;
+        std::printf("Processing time (pupil, total) (result x,y): %.4f %.4f - %.2f %.2f\n", processTime, totalTime, tracker.getEllipseCentroid().x, tracker.getEllipseCentroid().y);
     }
 
     // release the video source before exiting

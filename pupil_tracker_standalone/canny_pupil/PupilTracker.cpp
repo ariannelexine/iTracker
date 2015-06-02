@@ -9,6 +9,10 @@
 
 #include "PupilTracker.h"
 #include <opencv2/core/core.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv/highgui.h>
+
+#include <iostream>
 
 /**********************************************************************************************************************
 * @BRIEF Constructor to create a PupilTracker
@@ -16,6 +20,7 @@
 **********************************************************************************************************************/
 PupilTracker::PupilTracker()
 {
+
 }
 
 /**********************************************************************************************************************
@@ -27,26 +32,133 @@ PupilTracker::PupilTracker()
 *********************************************************************************************************************/
 bool PupilTracker::findPupil(const cv::Mat& imageIn)
 {
-	bool success = false;
+    bool success = true;
 
-	// perfom the actual tracking step
-	success = true;
+    // get the normalized grayscale image
+    const int rangeMin = 0;
+    const int rangeMax = 255;
+    cv::Mat imageGray;
+    cv::cvtColor(imageIn, imageGray, cv::COLOR_BGR2GRAY);
+    cv::normalize(imageGray, imageGray, rangeMin, rangeMax, cv::NORM_MINMAX, CV_8UC1);
+    if(m_debug)
+    {
+        cv::imshow("imageGray", imageGray);
+    }
 
-	// store the tracking result
-	if(success)
-	{
-		m_ellipseCentroid = cv::Point2f(240, 240);
-		m_ellipseRectangle = cv::RotatedRect(cv::Point2f(240, 240), cv::Size(10, 20), 0);
-		m_crCenter = cv::Point2f(240, 240);
-		m_crRadius = 1.0;
-		
-		return true;
-	}
-	else
-	{
-		// return false if tracking was not successful
-		return false;
-	}
+    // compute the intensity histogram
+    cv::Mat hist;
+    int channels[] = {0};
+    int histSize[] = {rangeMax - rangeMin + 1};
+    float range[] = {static_cast<float>(rangeMin), static_cast<float>(rangeMax)};
+    const float* ranges = {range};
+    cv::calcHist(&imageGray, 1, channels, cv::Mat(), hist, 1, histSize, &ranges, true, false);
+
+    // find histogram spikes
+    const int minSpikeSize = 40;
+    int lowestSpike = rangeMax;
+    int highestSpike = rangeMin;
+    int numSpikes = 0;
+    for(int i = 0; i < histSize[0]; i++)
+    {
+        // check to see if we have a spike
+        if(hist.at<uchar>(0, i) >= minSpikeSize)
+        {
+            numSpikes++;
+            if(i < lowestSpike)
+            {
+                lowestSpike = i;
+            }
+            if(i > highestSpike)
+            {
+                highestSpike = i;
+            }
+        }
+    }
+    if(numSpikes < 2)
+    {
+        // not enough spikes, assign default values
+        lowestSpike = 0;
+        highestSpike = 255;
+    }
+    m_bin_thresh = lowestSpike;
+
+    // create a mask for the dark pupil area (assign white to pupil area)
+    cv::Mat darkMask;
+    cv::inRange(imageGray, cv::InputArray(rangeMin), cv::InputArray(lowestSpike + m_pupilIntensityOffset), darkMask);
+    const cv::Mat morphKernel = getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(7, 7));
+    cv::dilate(darkMask, darkMask, morphKernel, cv::Point(-1, -1), 2);
+    if(m_debug)
+    {
+        cv::imshow("darkMask", darkMask);
+    }
+
+    // create a mask for the light glint area (assign black to glint area)
+    cv::Mat glintMask;
+    cv::inRange(imageGray, cv::InputArray(rangeMin), cv::InputArray(highestSpike - m_glintIntensityOffset), glintMask);
+    cv::erode(glintMask, glintMask, morphKernel, cv::Point(-1, -1), 1);
+    if(m_debug)
+    {
+        cv::imshow("glintMask", glintMask);
+    }
+
+    /*
+    // remove eye lashes using an open morphology operation
+    cv::Mat imageEyeLash;
+    const cv::Mat openKernel = getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(9, 9));
+    cv::morphologyEx(imageGray, imageEyeLash, cv::MORPH_OPEN, openKernel);
+    if(m_debug)
+    {
+        cv::imshow("eyeLash", imageEyeLash);
+    }
+    */
+
+    // apply additional blurring
+    cv::Mat imageBlurred;
+    if(m_blur > 1)
+    {
+        //cv::medianBlur(imageEyeLash, imageBlurred, m_blur);
+        cv::medianBlur(imageGray, imageBlurred, m_blur);
+    }
+    else
+    {
+        //imageBlurred = imageEyeLash;
+        imageBlurred = imageGray;
+    }
+
+    // compute canny edges
+    cv::Mat edges;
+    cv::Canny(imageBlurred, edges, m_canny_thresh, m_canny_thresh * m_canny_ratio, m_canny_aperture);
+    if(m_debug)
+    {
+        cv::imshow("edges", edges);
+    }
+
+    // remove edges outside of the white regions in the pupil and glint masks
+    cv::Mat edgesPruned;
+    cv::min(edges, darkMask, edgesPruned);
+    cv::min(edgesPruned, glintMask, edgesPruned);
+    if(m_debug)
+    {
+        cv::imshow("edgesPruned", edgesPruned);
+    }
+
+
+
+    // store the tracking result
+    if(success)
+    {
+        m_ellipseCentroid = cv::Point2f(240, 240);
+        m_ellipseRectangle = cv::RotatedRect(cv::Point2f(240, 240), cv::Size(10, 20), 0);
+        m_crCenter = cv::Point2f(240, 240);
+        m_crRadius = 1.0;
+
+        return true;
+    }
+    else
+    {
+        // return false if tracking was not successful
+        return false;
+    }
 }
 
 /**********************************************************************************************************************
@@ -56,7 +168,7 @@ bool PupilTracker::findPupil(const cv::Mat& imageIn)
 *********************************************************************************************************************/
 cv::Point2f PupilTracker::getEllipseCentroid()
 {
-	return m_ellipseCentroid;
+    return m_ellipseCentroid;
 }
 
 /**********************************************************************************************************************
@@ -66,5 +178,5 @@ cv::Point2f PupilTracker::getEllipseCentroid()
 *********************************************************************************************************************/
 cv::RotatedRect PupilTracker::getEllipseRectangle()
 {
-	return m_ellipseRectangle;
+    return m_ellipseRectangle;
 }
