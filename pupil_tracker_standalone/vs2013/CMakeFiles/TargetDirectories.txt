@@ -1,4 +1,0 @@
-C:/Users/murr/Documents/GitHub/APT/pupil_tracker_standalone/vs2013/CMakeFiles/swirski_lib.dir
-C:/Users/murr/Documents/GitHub/APT/pupil_tracker_standalone/vs2013/CMakeFiles/pupil_tracker.dir
-C:/Users/murr/Documents/GitHub/APT/pupil_tracker_standalone/vs2013/CMakeFiles/ALL_BUILD.dir
-C:/Users/murr/Documents/GitHub/APT/pupil_tracker_standalone/vs2013/CMakeFiles/ZERO_CHECK.dir

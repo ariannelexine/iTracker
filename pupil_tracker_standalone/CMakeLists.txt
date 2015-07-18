@@ -46,8 +46,8 @@ ELSE(WIN32)
 ENDIF(WIN32)
 
 #add_executable(swirski_tracker swirski_main.cpp)
-#add_library(swirski_lib swirski_pupil/PupilTracker.cpp swirski_pupil/cvx.cpp swirski_pupil/utils.cpp)
-#target_link_libraries(swirski_tracker swirski_lib ${OpenCV_LIBS} tbb)
+add_library(swirski_lib swirski_pupil/PupilTracker.cpp swirski_pupil/cvx.cpp swirski_pupil/utils.cpp)
+target_link_libraries(swirski_tracker swirski_lib ${OpenCV_LIBS} tbb)
 
-add_executable(canny_tracker canny_main.cpp canny_pupil/PupilTracker.cpp)
-target_link_libraries(canny_tracker ${OpenCV_LIBS})
+#add_executable(canny_tracker canny_main.cpp canny_pupil/PupilTracker.cpp)
+#target_link_libraries(canny_tracker ${OpenCV_LIBS})
