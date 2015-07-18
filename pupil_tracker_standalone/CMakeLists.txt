@@ -45,7 +45,7 @@ ELSE(WIN32)
     find_package(OpenCV REQUIRED)
 ENDIF(WIN32)
 
-#add_executable(swirski_tracker swirski_main.cpp)
+add_executable(swirski_tracker swirski_main.cpp)
 add_library(swirski_lib swirski_pupil/PupilTracker.cpp swirski_pupil/cvx.cpp swirski_pupil/utils.cpp)
 target_link_libraries(swirski_tracker swirski_lib ${OpenCV_LIBS} tbb)
 
