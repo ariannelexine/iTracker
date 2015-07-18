@@ -131,7 +131,7 @@ int main(int argc, char** argv)
     cv::VideoCapture occulography(cameraIndex);
     if(!occulography.isOpened())
     {
-        std::printf("Unable to initialize camera %u!", cameraIndex);
+        std::printf("Unable to initialize camera %u!\n", cameraIndex);
         return 0;
     }
     occulography.set(CV_CAP_PROP_FRAME_WIDTH, CAMERA_FRAME_WIDTH);
