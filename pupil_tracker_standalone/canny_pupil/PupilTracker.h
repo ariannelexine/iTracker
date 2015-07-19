@@ -49,7 +49,7 @@ private:
     int m_pupilIntensityOffset;
     int m_glintIntensityOffset;
 
-    int m_min_contour_size = 80;
+    int m_min_contour_size;
 
     float m_inital_ellipse_fit_threshhold;
     float m_min_ratio;
