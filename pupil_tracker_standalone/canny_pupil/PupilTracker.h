@@ -33,38 +33,38 @@ private:
     float m_crRadius;
 
     // define tracking processing variables
-    bool m_courseDetection = false;
-    int m_coarse_filter_min = 100;
-    int m_coarse_filter_max = 400;
+    bool m_courseDetection;
+    int m_coarse_filter_min;
+    int m_coarse_filter_max;
 
-    int m_blur = 1;
-    int m_canny_thresh = 159;
-    int m_canny_ratio = 2;
-    int m_canny_aperture = 5;
+    int m_blur;
+    int m_canny_thresh;
+    int m_canny_ratio;
+    int m_canny_aperture;
 
-    int m_intensity_range = 11;
-    int m_bin_thresh = 0;
+    int m_intensity_range;
+    int m_bin_thresh;
 
-    //int m_pupilIntensityOffset = 11;
-    int m_pupilIntensityOffset = 15;
-    int m_glintIntensityOffset = 5;
+    //int m_pupilIntensityOffse;
+    int m_pupilIntensityOffset;
+    int m_glintIntensityOffset;
 
     int m_min_contour_size = 80;
 
-    float m_inital_ellipse_fit_threshhold = static_cast<float>(1.8);
-    float m_min_ratio = 0.3f;
-    float m_pupil_min = 40.0f;
-    float m_pupil_max = 150.0f;
-    float m_target_size = 100.0f;
-    cv::Point2f m_strong_perimeter_ratio_range = cv::Point2f(0.8f, 1.1f);
-    cv::Point2f m_strong_area_ratio_range = cv::Point2f(0.6f, 1.1f);
-    cv::Point2f m_final_perimeter_ratio_range = cv::Point2f(0.6f, 1.2f);
-    float m_strong_prior = 0;
+    float m_inital_ellipse_fit_threshhold;
+    float m_min_ratio;
+    float m_pupil_min;
+    float m_pupil_max;
+    float m_target_size;
+    cv::Point2f m_strong_perimeter_ratio_range;
+    cv::Point2f m_strong_area_ratio_range;
+    cv::Point2f m_final_perimeter_ratio_range;
+    float m_strong_prior;
 
-    float m_confidence = 0;
+    float m_confidence;
 
     // debug settings
-    const bool m_debug = true;
+    const bool m_debug;
 
 public:
 
