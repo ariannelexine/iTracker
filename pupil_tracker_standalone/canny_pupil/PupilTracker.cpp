@@ -52,7 +52,7 @@ PupilTracker::PupilTracker()
     m_confidence = 0;
 
     // debug settings
-    m_debug = true;
+    m_display = false;
 }
 
 /**********************************************************************************************************************
@@ -72,7 +72,7 @@ bool PupilTracker::findPupil(const cv::Mat& imageIn)
     cv::Mat imageGray;
     cv::cvtColor(imageIn, imageGray, cv::COLOR_BGR2GRAY);
     cv::normalize(imageGray, imageGray, rangeMin, rangeMax, cv::NORM_MINMAX, CV_8UC1);
-    if(m_debug)
+    if(m_display)
     {
         cv::imshow("imageGray", imageGray);
     }
@@ -119,7 +119,7 @@ bool PupilTracker::findPupil(const cv::Mat& imageIn)
     cv::inRange(imageGray, cv::InputArray(rangeMin), cv::InputArray(lowestSpike + m_pupilIntensityOffset), darkMask);
     const cv::Mat morphKernel = getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(7, 7));
     cv::dilate(darkMask, darkMask, morphKernel, cv::Point(-1, -1), 2);
-    if(m_debug)
+    if(m_display)
     {
         cv::imshow("darkMask", darkMask);
     }
@@ -128,7 +128,7 @@ bool PupilTracker::findPupil(const cv::Mat& imageIn)
     cv::Mat glintMask;
     cv::inRange(imageGray, cv::InputArray(rangeMin), cv::InputArray(highestSpike - m_glintIntensityOffset), glintMask);
     cv::erode(glintMask, glintMask, morphKernel, cv::Point(-1, -1), 1);
-    if(m_debug)
+    if(m_display)
     {
         cv::imshow("glintMask", glintMask);
     }
@@ -138,7 +138,7 @@ bool PupilTracker::findPupil(const cv::Mat& imageIn)
     cv::Mat imageEyeLash;
     const cv::Mat openKernel = getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(9, 9));
     cv::morphologyEx(imageGray, imageEyeLash, cv::MORPH_OPEN, openKernel);
-    if(m_debug)
+    if(m_display)
     {
         cv::imshow("eyeLash", imageEyeLash);
     }
@@ -160,7 +160,7 @@ bool PupilTracker::findPupil(const cv::Mat& imageIn)
     // compute canny edges
     cv::Mat edges;
     cv::Canny(imageBlurred, edges, m_canny_thresh, m_canny_thresh * m_canny_ratio, m_canny_aperture);
-    if(m_debug)
+    if(m_display)
     {
         cv::imshow("edges", edges);
     }
@@ -169,7 +169,7 @@ bool PupilTracker::findPupil(const cv::Mat& imageIn)
     cv::Mat edgesPruned;
     cv::min(edges, darkMask, edgesPruned);
     cv::min(edgesPruned, glintMask, edgesPruned);
-    if(m_debug)
+    if(m_display)
     {
         cv::imshow("edgesPruned", edgesPruned);
     }
@@ -211,4 +211,13 @@ cv::Point2f PupilTracker::getEllipseCentroid()
 cv::RotatedRect PupilTracker::getEllipseRectangle()
 {
     return m_ellipseRectangle;
+}
+
+/**********************************************************************************************************************
+* @BRIEF Sets the display mode for the pupil tracker
+* @AUTHOR Christopher D. McMurrough
+*********************************************************************************************************************/
+void PupilTracker::setDisplay(bool display)
+{
+    m_display = display;
 }

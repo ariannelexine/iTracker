@@ -67,6 +67,7 @@ int main(int argc, char** argv)
 
     // initialize the eye camera video capture
     cv::VideoCapture occulography(cameraIndex);
+    //cv::VideoCapture occulography("C:/Users/Murr/Desktop/pupil_test.mp4");
     if(!occulography.isOpened())
     {
         std::printf("Unable to initialize camera %u! \n", cameraIndex);
@@ -95,6 +96,7 @@ int main(int argc, char** argv)
 
     // create the pupil tracking object
     PupilTracker tracker;
+    tracker.setDisplay(displayMode);
 
     // store the frame data
     cv::Mat eyeImage;
@@ -171,7 +173,7 @@ int main(int argc, char** argv)
         else
         {
             std::printf("WARNING: Unable to capture image from source!\n");
-occulography.set(CV_CAP_PROP_POS_FRAMES, 0);
+            occulography.set(CV_CAP_PROP_POS_FRAMES, 0);
             continue;
         }
 

@@ -64,7 +64,7 @@ private:
     float m_confidence;
 
     // debug settings
-    bool m_debug;
+    bool m_display;
 
 public:
 
@@ -74,9 +74,10 @@ public:
     // accessors
     cv::Point2f getEllipseCentroid();
     cv::RotatedRect getEllipseRectangle();
-
+    
     // utility functions
     bool findPupil(const cv::Mat& imageIn);
+    void setDisplay(bool display);
 };
 
 #endif // PUPIL_TRACKER_H
