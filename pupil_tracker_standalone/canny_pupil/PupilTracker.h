@@ -64,7 +64,7 @@ private:
     float m_confidence;
 
     // debug settings
-    const bool m_debug;
+    bool m_debug;
 
 public:
 
