@@ -1,12 +1,12 @@
-/**********************************************************************************************************************
- * @FILE main.cpp
- * @BRIEF USB implementation of the canny pupil tracker
+/*******************************************************************************************************************//**
+ * @file main.cpp
+ * @brief USB implementation of the canny pupil tracker
  *
  * USB implementation of the canny pupil tracker by pupil-labs
  * https://github.com/pupil-labs/pupil/
  *
- * @AUTHOR Christopher D. McMurrough
- *********************************************************************************************************************/
+ * @author Christopher D. McMurrough
+ **********************************************************************************************************************/
 
 #include <iostream>
 #include <stdio.h>
@@ -37,16 +37,16 @@ CvScalar COLOR_BLUE = CV_RGB(0, 0, 255);
 CvScalar COLOR_YELLOW = CV_RGB(255, 255, 0);
 CvScalar COLOR_MAGENTA = CV_RGB(255, 0, 255);
 
-/**********************************************************************************************************************
- * @BRIEF Program entry point
+/*******************************************************************************************************************//**
+ * @brief Program entry point
  *
  * Handles image processing and display of annotated results
  *
- * @PARAM[in] argc command line argument count
- * @PARAM[in] argv command line argument vector
- * @RETURNS return status
- * @AUTHOR Christopher D. McMurrough
- *********************************************************************************************************************/
+ * @param[in] argc command line argument count
+ * @param[in] argv command line argument vector
+ * @returnS return status
+ * @author Christopher D. McMurrough
+ **********************************************************************************************************************/
 int main(int argc, char** argv)
 {
     // validate and parse the command line arguments

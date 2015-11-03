@@ -1,11 +1,11 @@
-/**********************************************************************************************************************
-* @FILE PupilTracker.cpp
-* @BRIEF Implementation for the PupilTracker class
+/*******************************************************************************************************************//**
+* @file PupilTracker.cpp
+* @brief Implementation for the PupilTracker class
 *
 * This class encapsulates the canny edge based pupil tracking algorithm
 *
-* @AUTHOR Christopher D. McMurrough
-**********************************************************************************************************************/
+* @author Christopher D. McMurrough
+***********************************************************************************************************************/
 
 #include "PupilTracker.h"
 #include <opencv2/core/core.hpp>
@@ -14,10 +14,10 @@
 
 #include <iostream>
 
-/**********************************************************************************************************************
-* @BRIEF Constructor to create a PupilTracker
-* @AUTHOR Christopher D. McMurrough
-**********************************************************************************************************************/
+/*******************************************************************************************************************//**
+* @brief Constructor to create a PupilTracker
+* @author Christopher D. McMurrough
+***********************************************************************************************************************/
 PupilTracker::PupilTracker()
 {
     // initialize tracking processing variables
@@ -55,13 +55,13 @@ PupilTracker::PupilTracker()
     m_display = false;
 }
 
-/**********************************************************************************************************************
-* @BRIEF Attempt to fit a pupil ellipse in the eye image frame
-* @PARAM[in] imageIn the input OpenCV image
-* @PARAM[out] result the output tracking data
-* @RETURN true if the a pupil was located in the image
-* @AUTHOR Christopher D. McMurrough
-*********************************************************************************************************************/
+/*******************************************************************************************************************//**
+* @brief Attempt to fit a pupil ellipse in the eye image frame
+* @param[in] imageIn the input OpenCV image
+* @param[out] result the output tracking data
+* @return true if the a pupil was located in the image
+* @author Christopher D. McMurrough
+***********************************************************************************************************************/
 bool PupilTracker::findPupil(const cv::Mat& imageIn)
 {
     bool success = true;
@@ -193,30 +193,30 @@ bool PupilTracker::findPupil(const cv::Mat& imageIn)
     }
 }
 
-/**********************************************************************************************************************
-* @BRIEF Returns the pupil centroid
-* @RETURN pupil center as cv::Point2f
-* @AUTHOR Christopher D. McMurrough
-*********************************************************************************************************************/
+/*******************************************************************************************************************//**
+* @brief Returns the pupil centroid
+* @return pupil center as cv::Point2f
+* @author Christopher D. McMurrough
+***********************************************************************************************************************/
 cv::Point2f PupilTracker::getEllipseCentroid()
 {
     return m_ellipseCentroid;
 }
 
-/**********************************************************************************************************************
-* @BRIEF Returns the pupil ellipse rectangle
-* @RETURN pupil ellipse rectangle as cv::RotatedRect
-* @AUTHOR Christopher D. McMurrough
-*********************************************************************************************************************/
+/*******************************************************************************************************************//**
+* @brief Returns the pupil ellipse rectangle
+* @return pupil ellipse rectangle as cv::RotatedRect
+* @author Christopher D. McMurrough
+***********************************************************************************************************************/
 cv::RotatedRect PupilTracker::getEllipseRectangle()
 {
     return m_ellipseRectangle;
 }
 
-/**********************************************************************************************************************
-* @BRIEF Sets the display mode for the pupil tracker
-* @AUTHOR Christopher D. McMurrough
-*********************************************************************************************************************/
+/*******************************************************************************************************************//**
+* @brief Sets the display mode for the pupil tracker
+* @author Christopher D. McMurrough
+***********************************************************************************************************************/
 void PupilTracker::setDisplay(bool display)
 {
     m_display = display;

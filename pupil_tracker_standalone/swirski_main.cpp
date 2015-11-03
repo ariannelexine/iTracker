@@ -1,12 +1,12 @@
-/**********************************************************************************************************************
- * @FILE main.cpp
- * @BRIEF USB implementation of the robust pupil tracker by Lech Swirski
+/*******************************************************************************************************************//**
+ * @file main.cpp
+ * @brief USB implementation of the robust pupil tracker by Lech Swirski
  *
  * USB implementation of the robust pupil tracker by Lech Swirski
  * http://www.cl.cam.ac.uk/research/rainbow/projects/pupiltracking/
  *
- * @AUTHOR Christopher D. McMurrough
- *********************************************************************************************************************/
+ * @author Christopher D. McMurrough
+ ***********************************************************************************************************************/
 
 #include <iostream>
 #include <stdio.h>
@@ -52,13 +52,13 @@ struct PupilData
     cv::RotatedRect ellipse_rectangle;
 };
 
-/**********************************************************************************************************************
- * @BRIEF Attempt to fit a pupil ellipse in the eye image frame
- * @PARAM[in] imageIn the input OpenCV image
- * @PARAM[out] result the output tracking data
- * @RETURN true if the a pupil was located in the image
- * @AUTHOR Christopher D. McMurrough
- *********************************************************************************************************************/
+/*******************************************************************************************************************//**
+ * @brief Attempt to fit a pupil ellipse in the eye image frame
+ * @param[in] imageIn the input OpenCV image
+ * @param[out] result the output tracking data
+ * @return true if the a pupil was located in the image
+ * @author Christopher D. McMurrough
+ ***********************************************************************************************************************/
 bool processImage(const cv::Mat& imageIn, PupilData& result)
 {
     // set the tracking parameters for this frame
@@ -96,16 +96,16 @@ bool processImage(const cv::Mat& imageIn, PupilData& result)
     }
 }
 
-/**********************************************************************************************************************
- * @BRIEF Program entry point
+/*******************************************************************************************************************//**
+ * @brief Program entry point
  *
  * Handles image processing and display of annotated results
  *
- * @PARAM[in] argc command line argument count
- * @PARAM[in] argv command line argument vector
- * @RETURNS return status
- * @AUTHOR Christopher D. McMurrough
- *********************************************************************************************************************/
+ * @param[in] argc command line argument count
+ * @param[in] argv command line argument vector
+ * @returnS return status
+ * @author Christopher D. McMurrough
+ ***********************************************************************************************************************/
 int main(int argc, char** argv)
 {
     // store video capture parameters
