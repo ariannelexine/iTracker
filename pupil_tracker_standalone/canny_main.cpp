@@ -11,7 +11,7 @@
 #include <iostream>
 #include <stdio.h>
 #include <time.h>
-#include <opencv/highgui.h>
+#include "opencv2/opencv.hpp"
 
 #include "canny_pupil/PupilTracker.h"
 
