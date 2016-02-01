@@ -12,6 +12,7 @@
 //#include <opencv2/imgproc/imgproc.hpp>
 //#include <opencv/highgui.h>
 #include "opencv2/opencv.hpp"
+//#include "opencv2/imgproc/imgproc.hpp"
 
 #include <iostream>
 
@@ -34,8 +35,8 @@ PupilTracker::PupilTracker()
     m_intensity_range = 11;
     m_bin_thresh = 0;
 
-    //int m_pupilIntensityOffset = 11;
-    m_pupilIntensityOffset = 15;
+    m_pupilIntensityOffset = 11;
+    //m_pupilIntensityOffset = 15;
     m_glintIntensityOffset = 5;
 
     m_min_contour_size = 80;
@@ -175,8 +176,34 @@ bool PupilTracker::findPupil(const cv::Mat& imageIn)
         cv::imshow("edgesPruned", edgesPruned);
     }
 
-
-
+    // compute the connected components out of the pupil edge candidates
+    cv::Mat connectedEdges = cv::Mat::zeros(edgesPruned.size(), CV_8UC1);
+    std::vector<std::vector<cv::Point> > contours;
+    cv::findContours(edgesPruned, contours, CV_RETR_CCOMP, CV_CHAIN_APPROX_SIMPLE);
+    bool retryContourMerge = true;
+    int relaxContourMerge = 0;
+    while(retryContourMerge && contours.size() > 0)
+    {
+        for(int i = 0; i < contours.size(); i++)
+        {
+            // merge the contour if sufficiently large
+            if(contours.at(i).size() < m_min_contour_size - relaxContourMerge)
+            {
+                continue;
+            }
+            else
+            {
+                cv::drawContours(connectedEdges, contours, i, cv::Scalar(255));
+                retryContourMerge = false;
+            }
+        }
+        relaxContourMerge += 2;
+    }
+    if(m_display)
+    {
+        cv::imshow("connectedEdges", connectedEdges);
+    }
+    
     // store the tracking result
     if(success)
     {
