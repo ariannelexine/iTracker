@@ -67,7 +67,8 @@ int main(int argc, char** argv)
 
     // initialize the eye camera video capture
     //cv::VideoCapture occulography(cameraIndex);
-    cv::VideoCapture occulography("C:/Users/Murr/Desktop/pupil_test.mp4");
+    cv::VideoCapture occulography("/home/arianne/APT_Test/pupil_test.mp4"); 
+   // cv::VideoCapture occulography("http://129.107.116.133:8081/");
     if(!occulography.isOpened())
     {
         std::printf("Unable to initialize camera %u! \n", cameraIndex);
