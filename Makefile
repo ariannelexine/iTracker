@@ -48,10 +48,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/arianne/APT_Test/pupil_tracker_standalone
+CMAKE_SOURCE_DIR = /home/itracker/iTracker/pupil_tracker_standalone
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/arianne/APT_Test
+CMAKE_BINARY_DIR = /home/itracker/iTracker
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -80,9 +80,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/arianne/APT_Test/CMakeFiles /home/arianne/APT_Test/CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/itracker/iTracker/CMakeFiles /home/itracker/iTracker/CMakeFiles/progress.marks
 	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/arianne/APT_Test/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/itracker/iTracker/CMakeFiles 0
 .PHONY : all
 
 # The main clean target

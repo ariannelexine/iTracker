@@ -4,8 +4,8 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/home/arianne/APT_Test/pupil_tracker_standalone/canny_main.cpp" "/home/arianne/APT_Test/CMakeFiles/canny_tracker.dir/canny_main.cpp.o"
-  "/home/arianne/APT_Test/pupil_tracker_standalone/canny_pupil/PupilTracker.cpp" "/home/arianne/APT_Test/CMakeFiles/canny_tracker.dir/canny_pupil/PupilTracker.cpp.o"
+  "/home/itracker/iTracker/pupil_tracker_standalone/canny_main.cpp" "/home/itracker/iTracker/CMakeFiles/canny_tracker.dir/canny_main.cpp.o"
+  "/home/itracker/iTracker/pupil_tracker_standalone/canny_pupil/PupilTracker.cpp" "/home/itracker/iTracker/CMakeFiles/canny_tracker.dir/canny_pupil/PupilTracker.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 

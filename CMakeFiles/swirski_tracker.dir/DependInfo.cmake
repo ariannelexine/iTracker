@@ -4,7 +4,7 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/home/arianne/APT_Test/pupil_tracker_standalone/swirski_main.cpp" "/home/arianne/APT_Test/CMakeFiles/swirski_tracker.dir/swirski_main.cpp.o"
+  "/home/itracker/iTracker/pupil_tracker_standalone/swirski_main.cpp" "/home/itracker/iTracker/CMakeFiles/swirski_tracker.dir/swirski_main.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 
@@ -22,7 +22,7 @@ set(CMAKE_CXX_TARGET_INCLUDE_PATH
 
 # Targets to which this target links.
 set(CMAKE_TARGET_LINKED_INFO_FILES
-  "/home/arianne/APT_Test/CMakeFiles/swirski_lib.dir/DependInfo.cmake"
+  "/home/itracker/iTracker/CMakeFiles/swirski_lib.dir/DependInfo.cmake"
   )
 
 # Fortran module output directory.
