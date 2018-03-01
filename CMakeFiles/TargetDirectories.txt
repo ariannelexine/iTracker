@@ -1,5 +1,0 @@
-/home/itracker/iTracker/CMakeFiles/edit_cache.dir
-/home/itracker/iTracker/CMakeFiles/swirski_tracker.dir
-/home/itracker/iTracker/CMakeFiles/swirski_lib.dir
-/home/itracker/iTracker/CMakeFiles/canny_tracker.dir
-/home/itracker/iTracker/CMakeFiles/rebuild_cache.dir

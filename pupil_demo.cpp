@@ -1,9 +1,8 @@
 /*******************************************************************************************************************//**
- * @file main.cpp
- * @brief USB implementation of the canny pupil tracker
+ * @file pupil_tracker.cpp
+ * @brief C++ implementation of a pupil tracker based on canny edge detection
  *
- * USB implementation of the canny pupil tracker by pupil-labs
- * https://github.com/pupil-labs/pupil/
+ * Canny edge detector based pupil tracker accepting either live capture or read-from-file video input.
  *
  * @author Christopher D. McMurrough
  **********************************************************************************************************************/
@@ -11,9 +10,9 @@
 #include <iostream>
 #include <stdio.h>
 #include <time.h>
+#include <string>
 #include "opencv2/opencv.hpp"
-
-#include "canny_pupil/PupilTracker.h"
+#include "PupilTracker.h"
 
 // configuration parameters
 #define NUM_COMNMAND_LINE_ARGUMENTS 2
@@ -50,30 +49,42 @@ CvScalar COLOR_MAGENTA = CV_RGB(255, 0, 255);
 int main(int argc, char** argv)
 {
     // validate and parse the command line arguments
-    int cameraIndex = 0;
+    std::string videoSource = "0";
     bool displayMode = true;
     bool flipDisplay = false;
     if(argc != NUM_COMNMAND_LINE_ARGUMENTS + 1)
     {
-        std::printf("USAGE: <camera_index> <display_mode>\n");
+        std::printf("USAGE: <video_source> <display_mode>\n");
         std::printf("Running with default parameters... \n");
     }
     else
     {
-        cameraIndex = atoi(argv[1]);
+        videoSource = argv[1];
         displayMode = atoi(argv[2]) > 0;
         flipDisplay = atoi(argv[2]) == 2;
     }
 
     // initialize the eye camera video capture
-    //cv::VideoCapture occulography(cameraIndex);
-    //cv::VideoCapture occulography("/home/itracker/iTracker/pupil_test.mp4");
-   cv::VideoCapture occulography("http://129.107.117.100:8081/"); 
-   if(!occulography.isOpened())
+    cv::VideoCapture occulography;
+    if((videoSource.find_first_not_of( "0123456789" ) == std::string::npos))
     {
-        std::printf("Unable to initialize camera %u! \n", cameraIndex);
+        // video source is an integer, open as a device index
+        occulography.open(std::stoi(videoSource));
+    }
+    else
+    {
+        // video source is a string, interpret as a file path
+        occulography.open(videoSource);
+    }
+
+    // check to see if the video source was opened successfully
+    if(!occulography.isOpened())
+    {
+        std::printf("Unable to initialize video source %s! \n", videoSource.c_str());
         return 0;
     }
+
+    // set video capture parameters
     occulography.set(CV_CAP_PROP_FRAME_WIDTH, CAMERA_FRAME_WIDTH);
     occulography.set(CV_CAP_PROP_FRAME_HEIGHT, CAMERA_FRAME_HEIGHT);
     occulography.set(CV_CAP_PROP_FORMAT, CAMERA_FORMAT);
@@ -101,8 +112,6 @@ int main(int argc, char** argv)
 
     // store the frame data
     cv::Mat eyeImage;
-    //struct PupilData result;
-    bool trackingSuccess = false;
 
     // store the time between frames
     int frameStartTicks, frameEndTicks, processStartTicks, processEndTicks;
@@ -120,7 +129,7 @@ int main(int argc, char** argv)
         {
             // process the image frame
             processStartTicks = clock();
-            trackingSuccess = tracker.findPupil(eyeImage);
+            bool trackingSuccess = tracker.findPupil(eyeImage);
             processEndTicks = clock();
             processTime = ((float)(processEndTicks - processStartTicks)) / CLOCKS_PER_SEC;
 
@@ -138,8 +147,7 @@ int main(int argc, char** argv)
                 // annotate the image if tracking was successful
                 if(trackingSuccess)
                 {
-                    // draw the pupil center and boundary
-                    //cvx::cross(displayImage, result.pupil_center, 5, COLOR_RED);
+                    // draw the pupil ellipse
                     cv::ellipse(displayImage, tracker.getEllipseRectangle(), COLOR_RED);
 
                     // shade the pupil area
@@ -187,4 +195,3 @@ int main(int argc, char** argv)
     // release the video source before exiting
     occulography.release();
 }
-

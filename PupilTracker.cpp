@@ -8,12 +8,7 @@
 ***********************************************************************************************************************/
 
 #include "PupilTracker.h"
-//#include <opencv2/core/core.hpp>
-//#include <opencv2/imgproc/imgproc.hpp>
-//#include <opencv/highgui.h>
 #include "opencv2/opencv.hpp"
-//#include "opencv2/imgproc/imgproc.hpp"
-
 #include <iostream>
 
 /*******************************************************************************************************************//**
@@ -22,39 +17,19 @@
 ***********************************************************************************************************************/
 PupilTracker::PupilTracker()
 {
-    // initialize tracking processing variables
-    m_courseDetection = false;
-    m_coarse_filter_min = 100;
-    m_coarse_filter_max = 400;
-
-    m_blur = 1;
+    // tracker settings
+    m_blur = 5;
     m_canny_thresh = 159;
     m_canny_ratio = 2;
     m_canny_aperture = 5;
-
-    m_intensity_range = 11;
     m_bin_thresh = 0;
-
     m_pupilIntensityOffset = 11;
-    //m_pupilIntensityOffset = 15;
     m_glintIntensityOffset = 5;
-
     m_min_contour_size = 80;
-
-    m_inital_ellipse_fit_threshhold = static_cast<float>(1.8);
-    m_min_ratio = 0.3f;
-    m_pupil_min = 40.0f;
-    m_pupil_max = 150.0f;
-    m_target_size = 100.0f;
-    m_strong_perimeter_ratio_range = cv::Point2f(0.8f, 1.1f);
-    m_strong_area_ratio_range = cv::Point2f(0.6f, 1.1f);
-    m_final_perimeter_ratio_range = cv::Point2f(0.6f, 1.2f);
-    m_strong_prior = 0;
-
     m_confidence = 0;
 
-    // debug settings
-    m_display = false;
+    // set debug display
+    setDisplay(false);
 }
 
 /*******************************************************************************************************************//**
@@ -66,7 +41,7 @@ PupilTracker::PupilTracker()
 ***********************************************************************************************************************/
 bool PupilTracker::findPupil(const cv::Mat& imageIn)
 {
-    bool success = true;
+    bool success = false;
 
     // get the normalized grayscale image
     const int rangeMin = 0;
@@ -135,28 +110,20 @@ bool PupilTracker::findPupil(const cv::Mat& imageIn)
         cv::imshow("glintMask", glintMask);
     }
 
-    /*
-    // remove eye lashes using an open morphology operation
-    cv::Mat imageEyeLash;
-    const cv::Mat openKernel = getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(9, 9));
-    cv::morphologyEx(imageGray, imageEyeLash, cv::MORPH_OPEN, openKernel);
-    if(m_display)
-    {
-        cv::imshow("eyeLash", imageEyeLash);
-    }
-    */
-
     // apply additional blurring
     cv::Mat imageBlurred;
     if(m_blur > 1)
     {
-        //cv::medianBlur(imageEyeLash, imageBlurred, m_blur);
-        cv::medianBlur(imageGray, imageBlurred, m_blur);
+        cv::blur(imageGray, imageBlurred, cv::Size(m_blur,m_blur));
+        //cv::medianBlur(imageGray, imageBlurred, m_blur);
     }
     else
     {
-        //imageBlurred = imageEyeLash;
         imageBlurred = imageGray;
+    }
+    if(m_display)
+    {
+        cv::imshow("imageBlurred", imageBlurred);
     }
 
     // compute canny edges
@@ -177,9 +144,11 @@ bool PupilTracker::findPupil(const cv::Mat& imageIn)
     }
 
     // compute the connected components out of the pupil edge candidates
-    cv::Mat connectedEdges = cv::Mat::zeros(edgesPruned.size(), CV_8UC1);
     std::vector<std::vector<cv::Point> > contours;
     cv::findContours(edgesPruned, contours, CV_RETR_CCOMP, CV_CHAIN_APPROX_SIMPLE);
+
+    // determine merge candidacy for contours with sufficient size
+    std::vector<bool> contourMergeable(contours.size());
     bool retryContourMerge = true;
     int relaxContourMerge = 0;
     while(retryContourMerge && contours.size() > 0)
@@ -189,29 +158,52 @@ bool PupilTracker::findPupil(const cv::Mat& imageIn)
             // merge the contour if sufficiently large
             if(contours.at(i).size() < m_min_contour_size - relaxContourMerge)
             {
+                // contour is too small, ignore and continue
+                contourMergeable.at(i) = false;
                 continue;
             }
             else
             {
-                cv::drawContours(connectedEdges, contours, i, cv::Scalar(255));
+                contourMergeable.at(i) = true;
                 retryContourMerge = false;
             }
         }
         relaxContourMerge += 2;
     }
+
+    // perform the contour merging
+    std::vector<cv::Point> contoursMerged;
+    for(int i = 0; i < contours.size(); i++)
+    {
+        if(contourMergeable.at(i))
+        {
+            success = true;
+            contoursMerged.insert(contoursMerged.end(), contours.at(i).begin(), contours.at(i).end());
+        }
+    }
+
+    // display the contours if necessary
     if(m_display)
     {
-        cv::imshow("connectedEdges", connectedEdges);
+        // display both the raw and merged contours
+        cv::Mat edgesContoured = cv::Mat::zeros(edgesPruned.size(), CV_8UC1);
+        cv::Mat filteredContours = cv::Mat::zeros(edgesPruned.size(), CV_8UC1);
+        for(int i = 0; i < contours.size(); i++)
+        {
+            cv::drawContours(edgesContoured, contours, i, cv::Scalar(255));
+            if(contourMergeable.at(i))
+            {
+                cv::drawContours(filteredContours, contours, i, cv::Scalar(255));
+            }
+        }
+        cv::imshow("edgesContoured", edgesContoured);
+        cv::imshow("filteredContours", filteredContours);
     }
-    
-    // store the tracking result
+
+    // perform the ellipse fitting step and return 
     if(success)
     {
-        m_ellipseCentroid = cv::Point2f(240, 240);
-        m_ellipseRectangle = cv::RotatedRect(cv::Point2f(240, 240), cv::Size(10, 20), 0);
-        m_crCenter = cv::Point2f(240, 240);
-        m_crRadius = 1.0;
-
+        m_ellipseRectangle = cv::fitEllipse(contoursMerged);
         return true;
     }
     else
@@ -228,7 +220,7 @@ bool PupilTracker::findPupil(const cv::Mat& imageIn)
 ***********************************************************************************************************************/
 cv::Point2f PupilTracker::getEllipseCentroid()
 {
-    return m_ellipseCentroid;
+    return m_ellipseRectangle.center;
 }
 
 /*******************************************************************************************************************//**
@@ -243,6 +235,7 @@ cv::RotatedRect PupilTracker::getEllipseRectangle()
 
 /*******************************************************************************************************************//**
 * @brief Sets the display mode for the pupil tracker
+* @param[in] display show debug processing image frames if true
 * @author Christopher D. McMurrough
 ***********************************************************************************************************************/
 void PupilTracker::setDisplay(bool display)
