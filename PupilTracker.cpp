@@ -43,6 +43,11 @@ bool PupilTracker::findPupil(const cv::Mat& imageIn)
 {
     bool success = false;
 
+	/* need to add eye mask as a parameter
+		apply mask here
+		ROI black or white?
+		inputMat.copyTo(outputMat, maskMat) */
+
     // get the normalized grayscale image
     const int rangeMin = 0;
     const int rangeMax = 255;
@@ -240,5 +245,6 @@ cv::RotatedRect PupilTracker::getEllipseRectangle()
 ***********************************************************************************************************************/
 void PupilTracker::setDisplay(bool display)
 {
-    m_display = display;
+ //   m_display = display;
+	m_display = false;
 }

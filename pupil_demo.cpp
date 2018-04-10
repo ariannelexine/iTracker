@@ -15,7 +15,7 @@
 #include "PupilTracker.h"
 
 // configuration parameters
-#define NUM_COMNMAND_LINE_ARGUMENTS 2
+#define NUM_COMNMAND_LINE_ARGUMENTS 3
 #define CAMERA_FRAME_WIDTH 640
 #define CAMERA_FRAME_HEIGHT 360
 #define CAMERA_FORMAT CV_8UC1
@@ -36,6 +36,8 @@ CvScalar COLOR_BLUE = CV_RGB(0, 0, 255);
 CvScalar COLOR_YELLOW = CV_RGB(255, 255, 0);
 CvScalar COLOR_MAGENTA = CV_RGB(255, 0, 255);
 
+using namespace cv;
+
 /*******************************************************************************************************************//**
  * @brief Program entry point
  *
@@ -52,6 +54,7 @@ int main(int argc, char** argv)
     std::string videoSource = "0";
     bool displayMode = true;
     bool flipDisplay = false;
+	Mat maskImage;
     if(argc != NUM_COMNMAND_LINE_ARGUMENTS + 1)
     {
         std::printf("USAGE: <video_source> <display_mode>\n");
@@ -62,6 +65,7 @@ int main(int argc, char** argv)
         videoSource = argv[1];
         displayMode = atoi(argv[2]) > 0;
         flipDisplay = atoi(argv[2]) == 2;
+		maskImage = imread(argv[3]);
     }
 
     // initialize the eye camera video capture
@@ -106,6 +110,13 @@ int main(int argc, char** argv)
         cvSetWindowProperty("eyeImage", CV_WND_PROP_ASPECTRATIO, CV_WINDOW_KEEPRATIO);
     }
 
+	
+	Mat eye;
+	occulography.read(eye);
+	imshow("eye", eye);
+	imshow("mask", maskImage);
+
+	
     // create the pupil tracking object
     PupilTracker tracker;
     tracker.setDisplay(displayMode);
@@ -191,6 +202,7 @@ int main(int argc, char** argv)
         totalTime = ((float)(frameEndTicks - frameStartTicks)) / CLOCKS_PER_SEC;
         std::printf("Processing time (pupil, total) (result x,y): %.4f %.4f - %.2f %.2f\n", processTime, totalTime, tracker.getEllipseCentroid().x, tracker.getEllipseCentroid().y);
     }
+
 
     // release the video source before exiting
     occulography.release();
