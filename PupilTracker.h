@@ -50,7 +50,7 @@ public:
     cv::RotatedRect getEllipseRectangle();
     
     // utility functions
-    bool findPupil(const cv::Mat& imageIn);
+    bool findPupil(const cv::Mat& eyeImage, const cv::Mat& maskImage);
     void setDisplay(bool display);
 };
 

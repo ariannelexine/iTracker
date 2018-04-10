@@ -39,9 +39,46 @@ PupilTracker::PupilTracker()
 * @return true if the a pupil was located in the image
 * @author Christopher D. McMurrough
 ***********************************************************************************************************************/
-bool PupilTracker::findPupil(const cv::Mat& imageIn)
+bool PupilTracker::findPupil(const cv::Mat& eyeImage, const cv::Mat& maskImage)
 {
     bool success = false;
+
+	cv::Mat invertedImage;
+	bitwise_not(eyeImage, invertedImage);
+
+	cv::Mat masked;
+	invertedImage.copyTo(masked, maskImage);
+
+	cv::Mat imageIn;
+	bitwise_not(masked, imageIn);
+
+	cv::imshow("masked", imageIn);
+
+	/*cv::Mat iGray;
+    cv::cvtColor(i, iGray, cv::COLOR_BGR2GRAY);
+   
+	cv::Mat mask;
+	threshold(iGray, mask, 0, 20, 1);
+	
+	cv::Mat invertedMask;
+	bitwise_not(mask, invertedMask);
+
+	cv::Mat masked;
+	imageIn.copyTo(masked, invertedMask);*/
+	
+	//cv::Mat bitImage;
+	//maskImage.copyTo(mask, maskImage);	
+	//bitwise_or(eyeImage, maskImage, imageIn);
+	
+	
+	//cv::imshow("idk",bitImage);
+	//cv::imshow("mask",mask);
+
+	/*cv::Mat t(360, 640, CV_8UC3);
+    
+	imageIn.copyTo(t, maskGray);
+	cv::imshow("mask", t);*/
+
 
 	/* need to add eye mask as a parameter
 		apply mask here
@@ -245,6 +282,6 @@ cv::RotatedRect PupilTracker::getEllipseRectangle()
 ***********************************************************************************************************************/
 void PupilTracker::setDisplay(bool display)
 {
- //   m_display = display;
+    //m_display = display;
 	m_display = false;
 }

@@ -54,6 +54,8 @@ int main(int argc, char** argv)
     std::string videoSource = "0";
     bool displayMode = true;
     bool flipDisplay = false;
+
+	// Need to make another case for no mask in args
 	Mat maskImage;
     if(argc != NUM_COMNMAND_LINE_ARGUMENTS + 1)
     {
@@ -109,13 +111,6 @@ int main(int argc, char** argv)
         cvSetWindowProperty("eyeImage", CV_WND_PROP_AUTOSIZE, CV_WINDOW_NORMAL);
         cvSetWindowProperty("eyeImage", CV_WND_PROP_ASPECTRATIO, CV_WINDOW_KEEPRATIO);
     }
-
-	
-	Mat eye;
-	occulography.read(eye);
-	imshow("eye", eye);
-	imshow("mask", maskImage);
-
 	
     // create the pupil tracking object
     PupilTracker tracker;
@@ -140,7 +135,7 @@ int main(int argc, char** argv)
         {
             // process the image frame
             processStartTicks = clock();
-            bool trackingSuccess = tracker.findPupil(eyeImage);
+            bool trackingSuccess = tracker.findPupil(eyeImage, maskImage);
             processEndTicks = clock();
             processTime = ((float)(processEndTicks - processStartTicks)) / CLOCKS_PER_SEC;
 
@@ -202,7 +197,6 @@ int main(int argc, char** argv)
         totalTime = ((float)(frameEndTicks - frameStartTicks)) / CLOCKS_PER_SEC;
         std::printf("Processing time (pupil, total) (result x,y): %.4f %.4f - %.2f %.2f\n", processTime, totalTime, tracker.getEllipseCentroid().x, tracker.getEllipseCentroid().y);
     }
-
 
     // release the video source before exiting
     occulography.release();
