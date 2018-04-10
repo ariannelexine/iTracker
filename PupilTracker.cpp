@@ -39,51 +39,34 @@ PupilTracker::PupilTracker()
 * @return true if the a pupil was located in the image
 * @author Christopher D. McMurrough
 ***********************************************************************************************************************/
-bool PupilTracker::findPupil(const cv::Mat& eyeImage, const cv::Mat& maskImage)
+bool PupilTracker::findPupil(const cv::Mat& eyeImage)
 {
     bool success = false;
-
-	cv::Mat invertedImage;
-	bitwise_not(eyeImage, invertedImage);
-
-	cv::Mat masked;
-	invertedImage.copyTo(masked, maskImage);
-
 	cv::Mat imageIn;
-	bitwise_not(masked, imageIn);
 
-	cv::imshow("masked", imageIn);
+	// apply the mask to the image if a mask image exists
+	if(!maskImage.empty())
+	{
+		/* A black mask will be picked up as the pupil in the algorithm 
+		so we need to make the mask white. */
+		
+		// first invert the image
+		cv::Mat invertedImage;
+		bitwise_not(eyeImage, invertedImage);
 
-	/*cv::Mat iGray;
-    cv::cvtColor(i, iGray, cv::COLOR_BGR2GRAY);
-   
-	cv::Mat mask;
-	threshold(iGray, mask, 0, 20, 1);
-	
-	cv::Mat invertedMask;
-	bitwise_not(mask, invertedMask);
+		// Then apply the mask to the inverted image
+		cv::Mat masked;
+		invertedImage.copyTo(masked, maskImage);
 
-	cv::Mat masked;
-	imageIn.copyTo(masked, invertedMask);*/
-	
-	//cv::Mat bitImage;
-	//maskImage.copyTo(mask, maskImage);	
-	//bitwise_or(eyeImage, maskImage, imageIn);
-	
-	
-	//cv::imshow("idk",bitImage);
-	//cv::imshow("mask",mask);
+		// Invert the masked image back so that the mask is now white
+		bitwise_not(masked, imageIn);
 
-	/*cv::Mat t(360, 640, CV_8UC3);
-    
-	imageIn.copyTo(t, maskGray);
-	cv::imshow("mask", t);*/
-
-
-	/* need to add eye mask as a parameter
-		apply mask here
-		ROI black or white?
-		inputMat.copyTo(outputMat, maskMat) */
+		cv::imshow("masked", imageIn);
+	}
+	else 
+	{
+		imageIn = eyeImage;
+	}
 
     // get the normalized grayscale image
     const int rangeMin = 0;
@@ -282,6 +265,11 @@ cv::RotatedRect PupilTracker::getEllipseRectangle()
 ***********************************************************************************************************************/
 void PupilTracker::setDisplay(bool display)
 {
-    //m_display = display;
-	m_display = false;
+    m_display = display;
+	//m_display = false;
+}
+
+void PupilTracker::setMaskImage(const cv::Mat& maskIn)
+{
+	maskImage = maskIn;
 }

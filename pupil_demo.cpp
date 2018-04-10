@@ -54,20 +54,27 @@ int main(int argc, char** argv)
     std::string videoSource = "0";
     bool displayMode = true;
     bool flipDisplay = false;
-
-	// Need to make another case for no mask in args
 	Mat maskImage;
-    if(argc != NUM_COMNMAND_LINE_ARGUMENTS + 1)
+
+	// If mask image is NOT passed in
+    if(argc == NUM_COMNMAND_LINE_ARGUMENTS)
     {
-        std::printf("USAGE: <video_source> <display_mode>\n");
-        std::printf("Running with default parameters... \n");
+        videoSource = argv[1];
+        displayMode = atoi(argv[2]) > 0;
+        flipDisplay = atoi(argv[2]) == 2;
     }
-    else
+	// If a mask image is passed in
+    else if(argc == NUM_COMNMAND_LINE_ARGUMENTS + 1)
     {
         videoSource = argv[1];
         displayMode = atoi(argv[2]) > 0;
         flipDisplay = atoi(argv[2]) == 2;
 		maskImage = imread(argv[3]);
+    }
+    else
+    {
+        std::printf("USAGE: <video_source> <display_mode>\n");
+        std::printf("Running with default parameters... \n");
     }
 
     // initialize the eye camera video capture
@@ -116,6 +123,12 @@ int main(int argc, char** argv)
     PupilTracker tracker;
     tracker.setDisplay(displayMode);
 
+	// Set mask image if mask image exists
+	if(!maskImage.empty())
+	{
+		tracker.setMaskImage(maskImage);
+	}
+
     // store the frame data
     cv::Mat eyeImage;
 
@@ -135,14 +148,14 @@ int main(int argc, char** argv)
         {
             // process the image frame
             processStartTicks = clock();
-            bool trackingSuccess = tracker.findPupil(eyeImage, maskImage);
+            bool trackingSuccess = tracker.findPupil(eyeImage);
             processEndTicks = clock();
             processTime = ((float)(processEndTicks - processStartTicks)) / CLOCKS_PER_SEC;
 
             // warn on tracking failure
             if(!trackingSuccess)
             {
-                std::printf("Unable to locate pupil! \n");
+               std::printf("Unable to locate pupil! \n");
             }
 
             // update the display

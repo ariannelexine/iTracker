@@ -40,6 +40,8 @@ private:
     // debug settings
     bool m_display;
 
+	cv::Mat maskImage;
+
 public:
 
     // constructors
@@ -50,8 +52,9 @@ public:
     cv::RotatedRect getEllipseRectangle();
     
     // utility functions
-    bool findPupil(const cv::Mat& eyeImage, const cv::Mat& maskImage);
+    bool findPupil(const cv::Mat& eyeImage);
     void setDisplay(bool display);
+	void setMaskImage(const cv::Mat& maskImage);
 };
 
 #endif // PUPIL_TRACKER_H
