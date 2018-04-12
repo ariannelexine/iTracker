@@ -41,6 +41,7 @@ private:
     bool m_display;
 
 	cv::Mat maskImage;
+	cv::Mat pupilImage;
 
 public:
 
@@ -55,6 +56,8 @@ public:
     bool findPupil(const cv::Mat& eyeImage);
     void setDisplay(bool display);
 	void setMaskImage(const cv::Mat& maskImage);
+	void setPupilImage(const cv::Mat& image);
+	void showMultipleDisplays(std::vector<cv::Mat> images); 
 };
 
 #endif // PUPIL_TRACKER_H

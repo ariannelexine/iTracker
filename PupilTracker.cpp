@@ -11,6 +11,9 @@
 #include "opencv2/opencv.hpp"
 #include <iostream>
 
+#define CAMERA_FRAME_WIDTH 640
+#define CAMERA_FRAME_HEIGHT 360
+
 /*******************************************************************************************************************//**
 * @brief Constructor to create a PupilTracker
 * @author Christopher D. McMurrough
@@ -44,6 +47,8 @@ bool PupilTracker::findPupil(const cv::Mat& eyeImage)
     bool success = false;
 	cv::Mat imageIn;
 
+	std::vector<cv::Mat> images;
+
 	// apply the mask to the image if a mask image exists
 	if(!maskImage.empty())
 	{
@@ -61,7 +66,7 @@ bool PupilTracker::findPupil(const cv::Mat& eyeImage)
 		// Invert the masked image back so that the mask is now white
 		bitwise_not(masked, imageIn);
 
-		cv::imshow("masked", imageIn);
+		//cv::imshow("masked", masked);
 	}
 	else 
 	{
@@ -76,8 +81,10 @@ bool PupilTracker::findPupil(const cv::Mat& eyeImage)
     cv::normalize(imageGray, imageGray, rangeMin, rangeMax, cv::NORM_MINMAX, CV_8UC1);
     if(m_display)
     {
-        cv::imshow("imageGray", imageGray);
+		images.push_back(imageGray);
+        //cv::imshow("imageGray", imageGray);
     }
+	
 
     // compute the intensity histogram
     cv::Mat hist;
@@ -123,8 +130,11 @@ bool PupilTracker::findPupil(const cv::Mat& eyeImage)
     cv::dilate(darkMask, darkMask, morphKernel, cv::Point(-1, -1), 2);
     if(m_display)
     {
-        cv::imshow("darkMask", darkMask);
+		images.push_back(darkMask);
+        //cv::imshow("darkMask", darkMask);
     }
+
+	
 
     // create a mask for the light glint area (assign black to glint area)
     cv::Mat glintMask;
@@ -132,7 +142,8 @@ bool PupilTracker::findPupil(const cv::Mat& eyeImage)
     cv::erode(glintMask, glintMask, morphKernel, cv::Point(-1, -1), 1);
     if(m_display)
     {
-        cv::imshow("glintMask", glintMask);
+		images.push_back(glintMask);
+        //cv::imshow("glintMask", glintMask);
     }
 
     // apply additional blurring
@@ -148,15 +159,17 @@ bool PupilTracker::findPupil(const cv::Mat& eyeImage)
     }
     if(m_display)
     {
-        cv::imshow("imageBlurred", imageBlurred);
+		images.push_back(imageBlurred);
+        //cv::imshow("imageBlurred", imageBlurred);
     }
 
     // compute canny edges
     cv::Mat edges;
     cv::Canny(imageBlurred, edges, m_canny_thresh, m_canny_thresh * m_canny_ratio, m_canny_aperture);
     if(m_display)
-    {
-        cv::imshow("edges", edges);
+    {	
+		images.push_back(edges);
+        //cv::imshow("edges", edges);
     }
 
     // remove edges outside of the white regions in the pupil and glint masks
@@ -164,8 +177,9 @@ bool PupilTracker::findPupil(const cv::Mat& eyeImage)
     cv::min(edges, darkMask, edgesPruned);
     cv::min(edgesPruned, glintMask, edgesPruned);
     if(m_display)
-    {
-        cv::imshow("edgesPruned", edgesPruned);
+    {	
+		images.push_back(edgesPruned);
+        //cv::imshow("edgesPruned", edgesPruned);
     }
 
     // compute the connected components out of the pupil edge candidates
@@ -221,9 +235,13 @@ bool PupilTracker::findPupil(const cv::Mat& eyeImage)
                 cv::drawContours(filteredContours, contours, i, cv::Scalar(255));
             }
         }
-        cv::imshow("edgesContoured", edgesContoured);
-        cv::imshow("filteredContours", filteredContours);
+		images.push_back(edgesContoured);
+		images.push_back(filteredContours);
+        //cv::imshow("edgesContoured", edgesContoured);
+        //cv::imshow("filteredContours", filteredContours);
     }
+
+	PupilTracker::showMultipleDisplays(images);
 
     // perform the ellipse fitting step and return 
     if(success)
@@ -272,4 +290,42 @@ void PupilTracker::setDisplay(bool display)
 void PupilTracker::setMaskImage(const cv::Mat& maskIn)
 {
 	maskImage = maskIn;
+}
+
+void PupilTracker::setPupilImage(const cv::Mat& image)
+{
+	pupilImage= image;
+}
+void PupilTracker::showMultipleDisplays(std::vector<cv::Mat> images) 
+{
+	using namespace cv;
+
+	int rows = 3;
+	int cols = 3;
+	int m;
+	int n;
+
+	Mat DispImage(CAMERA_FRAME_HEIGHT * rows, CAMERA_FRAME_WIDTH * cols, 0);
+
+	for(int i = 0, m = 0, n = 0; i < images.size(); i++, m += CAMERA_FRAME_WIDTH)
+	{
+		cv::Mat image = images[i]; 
+
+		//Used to align images
+		if(i % cols == 0 && m != 0) {
+			m = 0;
+			n += (CAMERA_FRAME_HEIGHT);		
+		}
+
+		Rect ROI(m, n, CAMERA_FRAME_WIDTH, CAMERA_FRAME_HEIGHT);
+		image.copyTo(DispImage(ROI));
+	}
+
+	
+	//putText(DispImage, "Image Gray", cvPoint(CAMERA_FRAME_WIDTH / 4, CAMERA_FRAME_HEIGHT + 20), FONT_HERSHEY_COMPLEX_SMALL, 0.8, cvScalar(200,200,250),1, CV_AA);
+  	namedWindow("test", WINDOW_NORMAL);
+    imshow("test", DispImage);
+
+	//va_end(args);
+ 
 }
