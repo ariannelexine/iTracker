@@ -123,14 +123,8 @@ int main(int argc, char** argv)
     PupilTracker tracker;
     tracker.setDisplay(displayMode);
 
-	// Set mask image if mask image exists
-	if(!maskImage.empty())
-	{
-		tracker.setMaskImage(maskImage);
-	}
-
     // store the frame data
-    cv::Mat frame;
+    cv::Mat eyeImage;
 
     // store the time between frames
     int frameStartTicks, frameEndTicks, processStartTicks, processEndTicks;
@@ -144,10 +138,16 @@ int main(int argc, char** argv)
         frameStartTicks = clock();
 
         // attempt to acquire an image frame
-        if(occulography.read(frame))
+        if(occulography.read(eyeImage))
         {	
-			cv::Mat eyeImage;
-			resize(frame, eyeImage, cv::Size(CAMERA_FRAME_WIDTH, CAMERA_FRAME_HEIGHT));
+			// Set the size of the camera to use for the mask and display interface 
+			tracker.setCameraSize(eyeImage.cols, eyeImage.rows);
+			
+			// Set and resize mask image if mask image exists
+			if(!maskImage.empty())
+			{
+				tracker.setMaskImage(maskImage);
+			}
 
             // process the image frame
             processStartTicks = clock();
@@ -184,7 +184,7 @@ int main(int argc, char** argv)
                     // annotate the image
                     cv::Mat displayFlipped;
                     cv::flip(displayImage, displayFlipped, 1);
-                    cv::imshow("eyeImage", displayFlipped);
+                   // cv::imshow("eyeImage", displayFlipped);
 
                     // display the annotated image
                     isRunning = cv::waitKey(1) != 'q';
@@ -193,12 +193,16 @@ int main(int argc, char** argv)
                 else
                 {
                     // display the image
-                	cv::imshow("eyeImage", displayImage);
-					tracker.setPupilImage(displayImage);
+                	//cv::imshow("eyeImage", displayImage);
                     isRunning = cv::waitKey(1) != 'q';
                 }
+
+				// Add annoted image to the display interface
 				tracker.images.push_back(displayImage);
+				
+				// Display the findPupil algorithm
 				tracker.showMultipleDisplays();
+				// Clear vector of images for the next frame 
 				tracker.images.clear();
                 // release display image
                 displayImage.release();
@@ -208,7 +212,7 @@ int main(int argc, char** argv)
         {
             std::printf("WARNING: Unable to capture image from source!\n");
             occulography.set(CV_CAP_PROP_POS_FRAMES, 0);
-          //  continue;
+            continue;
         }
 
         // stop the timer and print the elapsed time
@@ -216,9 +220,6 @@ int main(int argc, char** argv)
         totalTime = ((float)(frameEndTicks - frameStartTicks)) / CLOCKS_PER_SEC;
         std::printf("Processing time (pupil, total) (result x,y): %.4f %.4f - %.2f %.2f\n", processTime, totalTime, tracker.getEllipseCentroid().x, tracker.getEllipseCentroid().y);
     }
-
-	//waitKey(0);
-	//return(0);
 
     // release the video source before exiting
     occulography.release();

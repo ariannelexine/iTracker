@@ -40,11 +40,18 @@ private:
     // debug settings
     bool m_display;
 
+	// inputted mask image
 	cv::Mat maskImage;
-	cv::Mat pupilImage;
+
+	// camera feed size and width used for setting image sizes
+	int camera_width;
+	int camera_height;
 
 public:
+	
+	// vector of processed images for display interface
 	std::vector<cv::Mat> images;
+
     // constructors
     PupilTracker();
 
@@ -56,8 +63,8 @@ public:
     bool findPupil(const cv::Mat& eyeImage);
     void setDisplay(bool display);
 	void setMaskImage(const cv::Mat& maskImage);
-	void setPupilImage(const cv::Mat& image);
 	void showMultipleDisplays(); 
+	void setCameraSize(int w, int h);
 
 };
 

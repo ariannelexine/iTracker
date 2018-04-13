@@ -11,9 +11,6 @@
 #include "opencv2/opencv.hpp"
 #include <iostream>
 
-#define CAMERA_FRAME_WIDTH 640
-#define CAMERA_FRAME_HEIGHT 360
-
 /*******************************************************************************************************************//**
 * @brief Constructor to create a PupilTracker
 * @author Christopher D. McMurrough
@@ -280,35 +277,49 @@ cv::RotatedRect PupilTracker::getEllipseRectangle()
 void PupilTracker::setDisplay(bool display)
 {
     m_display = display;
-	//m_display = false;
 }
-
+/*******************************************************************************************************************//**
+* @brief Sets and resizes the mask image
+* @param[in] mask image from args
+* @author Arianne Silvestre
+***********************************************************************************************************************/
 void PupilTracker::setMaskImage(const cv::Mat& maskIn)
 {
-	maskImage = maskIn;
+	
+	resize(maskIn, maskImage, cv::Size(camera_width, camera_height));
 }
-
-void PupilTracker::setPupilImage(const cv::Mat& image)
+/*******************************************************************************************************************//**
+* @brief Sets the size to the size from camera feed 
+* @param[in] camera image width and height
+* @author Arianne Silvestre
+***********************************************************************************************************************/
+void PupilTracker::setCameraSize(int width, int height)
 {
-	pupilImage= image;
+	camera_width = width;
+	camera_height = height;
 }
-
+/*******************************************************************************************************************//**
+* @brief display processing image frames in a 3 x 3 interface 
+* @author Arianne Silvestre
+***********************************************************************************************************************/
 void PupilTracker::showMultipleDisplays() 
 {
-	using namespace cv;
-
 	int rows = 3;
 	int cols = 3;
-	int m;
-	int n;
+	int m, n;
 
-	Mat DispImage(CAMERA_FRAME_HEIGHT * rows, CAMERA_FRAME_WIDTH * cols, CV_8UC3);
+	// Create a new 3 channel image
+	cv::Mat DispImage(camera_height * rows, camera_width * cols, CV_8UC3);
 
-	for(int i = 0, m = 0, n = 0; i < images.size(); i++, m += CAMERA_FRAME_WIDTH)
+	// Loop for number of images
+	for(int i = 0, m = 0, n = 0; i < images.size(); i++, m += camera_width)
 	{
+		cv::Mat image;
+
+		// if image is not of type CV_8UC3, convert it 
 		cv::Mat temp;
 		temp = images[i];
-		cv::Mat image;
+
 		if(temp.type() != CV_8UC3){	
 			cvtColor(temp, image, cv::COLOR_GRAY2RGB);
 		}
@@ -316,20 +327,18 @@ void PupilTracker::showMultipleDisplays()
 			image = temp;
 		}
 		
-		//Used to align images
+		// Used to align images
 		if(i % cols == 0 && m != 0) {
 			m = 0;
-			n += (CAMERA_FRAME_HEIGHT);		
+			n += (camera_height);		
 		}
-		//std::printf("%d, %d\n", image.type(), CV_8UC3);
-		Rect ROI(m, n, CAMERA_FRAME_WIDTH, CAMERA_FRAME_HEIGHT);
+		
+		// Set the image ROI to display the current image and copy to big image 
+		cv::Rect ROI(m, n, camera_width, camera_height);
 		image.copyTo(DispImage(ROI));
 	}
 	
-	//putText(DispImage, "Image Gray", cvPoint(CAMERA_FRAME_WIDTH / 4, CAMERA_FRAME_HEIGHT + 20), FONT_HERSHEY_COMPLEX_SMALL, 0.8, cvScalar(200,200,250),1, CV_AA);
-  	namedWindow("test", WINDOW_NORMAL);
-    imshow("test", DispImage);
-
-	//va_end(args);
- 
+	// Display interface
+  	cv::namedWindow("Eye Tracker", cv::WINDOW_NORMAL);
+    cv::imshow("Eye Tracker", DispImage);
 }
