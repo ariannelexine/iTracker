@@ -130,7 +130,7 @@ int main(int argc, char** argv)
 	}
 
     // store the frame data
-    cv::Mat eyeImage;
+    cv::Mat frame;
 
     // store the time between frames
     int frameStartTicks, frameEndTicks, processStartTicks, processEndTicks;
@@ -144,15 +144,14 @@ int main(int argc, char** argv)
         frameStartTicks = clock();
 
         // attempt to acquire an image frame
-        if(occulography.read(eyeImage))
+        if(occulography.read(frame))
         {	
-		
-			cv::Mat t;
-			resize(eyeImage, t, cv::Size(640, 360));
+			cv::Mat eyeImage;
+			resize(frame, eyeImage, cv::Size(CAMERA_FRAME_WIDTH, CAMERA_FRAME_HEIGHT));
 
             // process the image frame
             processStartTicks = clock();
-            bool trackingSuccess = tracker.findPupil(t);
+            bool trackingSuccess = tracker.findPupil(eyeImage);
             processEndTicks = clock();
             processTime = ((float)(processEndTicks - processStartTicks)) / CLOCKS_PER_SEC;
 
@@ -165,7 +164,7 @@ int main(int argc, char** argv)
             // update the display
             if(displayMode)
             {
-                cv::Mat displayImage(t);
+                cv::Mat displayImage(eyeImage);
 
                 // annotate the image if tracking was successful
                 if(trackingSuccess)
@@ -174,7 +173,7 @@ int main(int argc, char** argv)
                     cv::ellipse(displayImage, tracker.getEllipseRectangle(), COLOR_RED);
 
                     // shade the pupil area
-                    cv::Mat annotation(t.rows, t.cols, CV_8UC3, 0.0);
+                    cv::Mat annotation(eyeImage.rows, eyeImage.cols, CV_8UC3, 0.0);
                     cv::ellipse(annotation, tracker.getEllipseRectangle(), COLOR_MAGENTA, -1);
                     const double alpha = 0.7;
                     cv::addWeighted(displayImage, alpha, annotation, 1.0 - alpha, 0.0, displayImage);
