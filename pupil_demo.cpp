@@ -198,7 +198,8 @@ int main(int argc, char** argv)
                 }
 
 				// Add annoted image to the display interface
-				tracker.images.push_back(displayImage);
+				//tracker.images.push_back(displayImage);
+				tracker.images.insert(tracker.images.begin(), displayImage);
 				
 				// Display the findPupil algorithm
 				tracker.showMultipleDisplays();
@@ -220,6 +221,9 @@ int main(int argc, char** argv)
         totalTime = ((float)(frameEndTicks - frameStartTicks)) / CLOCKS_PER_SEC;
         std::printf("Processing time (pupil, total) (result x,y): %.4f %.4f - %.2f %.2f\n", processTime, totalTime, tracker.getEllipseCentroid().x, tracker.getEllipseCentroid().y);
     }
+
+	//waitKey(0);
+	//return(0);
 
     // release the video source before exiting
     occulography.release();

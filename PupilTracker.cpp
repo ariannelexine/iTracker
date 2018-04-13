@@ -154,7 +154,7 @@ bool PupilTracker::findPupil(const cv::Mat& eyeImage)
     }
     if(m_display)
     {
-		images.push_back(imageBlurred);
+		//images.push_back(imageBlurred);
         //cv::imshow("imageBlurred", imageBlurred);
     }
 
@@ -173,7 +173,7 @@ bool PupilTracker::findPupil(const cv::Mat& eyeImage)
     cv::min(edgesPruned, glintMask, edgesPruned);
     if(m_display)
     {	
-		images.push_back(edgesPruned);
+		//images.push_back(edgesPruned);
         //cv::imshow("edgesPruned", edgesPruned);
     }
 
@@ -230,7 +230,7 @@ bool PupilTracker::findPupil(const cv::Mat& eyeImage)
                 cv::drawContours(filteredContours, contours, i, cv::Scalar(255));
             }
         }
-		images.push_back(edgesContoured);
+		//images.push_back(edgesContoured);
 		images.push_back(filteredContours);
         //cv::imshow("edgesContoured", edgesContoured);
         //cv::imshow("filteredContours", filteredContours);
@@ -299,7 +299,7 @@ void PupilTracker::setCameraSize(int width, int height)
 	camera_height = height;
 }
 /*******************************************************************************************************************//**
-* @brief display processing image frames in a 3 x 3 interface 
+* @brief display processing image frames 
 * @author Arianne Silvestre
 ***********************************************************************************************************************/
 void PupilTracker::showMultipleDisplays() 
@@ -316,26 +316,39 @@ void PupilTracker::showMultipleDisplays()
 	{
 		cv::Mat image;
 
-		// if image is not of type CV_8UC3, convert it 
 		cv::Mat temp;
 		temp = images[i];
 
-		if(temp.type() != CV_8UC3){	
-			cvtColor(temp, image, cv::COLOR_GRAY2RGB);
-		}
-		else {
+		// Resize main image 
+		if(i == 0)
+		{
 			image = temp;
+			cv::Mat mainImage;
+			resize(image, mainImage, cv::Size(camera_width * 2, camera_height * 2));
+			cv::Rect ROI(m, n, camera_width * 2, camera_height * 2);
+			mainImage.copyTo(DispImage(ROI));
 		}
-		
-		// Used to align images
-		if(i % cols == 0 && m != 0) {
-			m = 0;
-			n += (camera_height);		
+		// Add processing pictures 
+		else 
+		{
+			// image is not of type CV_8UC3, convert it 
+			cvtColor(temp, image, cv::COLOR_GRAY2RGB);
+			// Used to align images, first two rows 
+			if(i == 1 || i == 2) {
+				m = camera_width * 2;
+				if (i == 2) {
+					n += (camera_height);
+				}
+			}
+			// last row 
+			else if(i % cols == 0 && m != 0) {
+				m = 0;
+				n += (camera_height);		
+			}
+			// Set the image ROI to display the current image and copy to big image 
+			cv::Rect ROI(m, n, camera_width, camera_height);
+			image.copyTo(DispImage(ROI));
 		}
-		
-		// Set the image ROI to display the current image and copy to big image 
-		cv::Rect ROI(m, n, camera_width, camera_height);
-		image.copyTo(DispImage(ROI));
 	}
 	
 	// Display interface
