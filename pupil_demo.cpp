@@ -190,11 +190,13 @@ int main(int argc, char** argv)
                 else
                 {
                     // display the image
-                    cv::imshow("eyeImage", displayImage);
+                	cv::imshow("eyeImage", displayImage);
 					tracker.setPupilImage(displayImage);
                     isRunning = cv::waitKey(1) != 'q';
                 }
-
+				tracker.images.push_back(displayImage);
+				tracker.showMultipleDisplays();
+				tracker.images.clear();
                 // release display image
                 displayImage.release();
             }
@@ -203,13 +205,13 @@ int main(int argc, char** argv)
         {
             std::printf("WARNING: Unable to capture image from source!\n");
             occulography.set(CV_CAP_PROP_POS_FRAMES, 0);
-         //   continue;
+          //  continue;
         }
 
         // stop the timer and print the elapsed time
         frameEndTicks = clock();
         totalTime = ((float)(frameEndTicks - frameStartTicks)) / CLOCKS_PER_SEC;
-        //std::printf("Processing time (pupil, total) (result x,y): %.4f %.4f - %.2f %.2f\n", processTime, totalTime, tracker.getEllipseCentroid().x, tracker.getEllipseCentroid().y);
+        std::printf("Processing time (pupil, total) (result x,y): %.4f %.4f - %.2f %.2f\n", processTime, totalTime, tracker.getEllipseCentroid().x, tracker.getEllipseCentroid().y);
     }
 
 	//waitKey(0);

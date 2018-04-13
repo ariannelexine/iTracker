@@ -44,7 +44,7 @@ private:
 	cv::Mat pupilImage;
 
 public:
-
+	std::vector<cv::Mat> images;
     // constructors
     PupilTracker();
 
@@ -57,7 +57,8 @@ public:
     void setDisplay(bool display);
 	void setMaskImage(const cv::Mat& maskImage);
 	void setPupilImage(const cv::Mat& image);
-	void showMultipleDisplays(std::vector<cv::Mat> images); 
+	void showMultipleDisplays(); 
+
 };
 
 #endif // PUPIL_TRACKER_H

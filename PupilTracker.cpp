@@ -47,8 +47,6 @@ bool PupilTracker::findPupil(const cv::Mat& eyeImage)
     bool success = false;
 	cv::Mat imageIn;
 
-	std::vector<cv::Mat> images;
-
 	// apply the mask to the image if a mask image exists
 	if(!maskImage.empty())
 	{
@@ -241,8 +239,6 @@ bool PupilTracker::findPupil(const cv::Mat& eyeImage)
         //cv::imshow("filteredContours", filteredContours);
     }
 
-	PupilTracker::showMultipleDisplays(images);
-
     // perform the ellipse fitting step and return 
     if(success)
     {
@@ -296,7 +292,8 @@ void PupilTracker::setPupilImage(const cv::Mat& image)
 {
 	pupilImage= image;
 }
-void PupilTracker::showMultipleDisplays(std::vector<cv::Mat> images) 
+
+void PupilTracker::showMultipleDisplays() 
 {
 	using namespace cv;
 
@@ -305,22 +302,29 @@ void PupilTracker::showMultipleDisplays(std::vector<cv::Mat> images)
 	int m;
 	int n;
 
-	Mat DispImage(CAMERA_FRAME_HEIGHT * rows, CAMERA_FRAME_WIDTH * cols, 0);
+	Mat DispImage(CAMERA_FRAME_HEIGHT * rows, CAMERA_FRAME_WIDTH * cols, CV_8UC3);
 
 	for(int i = 0, m = 0, n = 0; i < images.size(); i++, m += CAMERA_FRAME_WIDTH)
 	{
-		cv::Mat image = images[i]; 
-
+		cv::Mat temp;
+		temp = images[i];
+		cv::Mat image;
+		if(temp.type() != CV_8UC3){	
+			cvtColor(temp, image, cv::COLOR_GRAY2RGB);
+		}
+		else {
+			image = temp;
+		}
+		
 		//Used to align images
 		if(i % cols == 0 && m != 0) {
 			m = 0;
 			n += (CAMERA_FRAME_HEIGHT);		
 		}
-
+		//std::printf("%d, %d\n", image.type(), CV_8UC3);
 		Rect ROI(m, n, CAMERA_FRAME_WIDTH, CAMERA_FRAME_HEIGHT);
 		image.copyTo(DispImage(ROI));
 	}
-
 	
 	//putText(DispImage, "Image Gray", cvPoint(CAMERA_FRAME_WIDTH / 4, CAMERA_FRAME_HEIGHT + 20), FONT_HERSHEY_COMPLEX_SMALL, 0.8, cvScalar(200,200,250),1, CV_AA);
   	namedWindow("test", WINDOW_NORMAL);
