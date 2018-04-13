@@ -319,28 +319,23 @@ void PupilTracker::showMultipleDisplays()
 		cv::Mat temp;
 		temp = images[i];
 
-		// Resize main image 
-		if(i == 0)
-		{
+		// Resize main image and place at bottom right of screen
+		if(i == images.size() - 1) {
 			image = temp;
 			cv::Mat mainImage;
 			resize(image, mainImage, cv::Size(camera_width * 2, camera_height * 2));
-			cv::Rect ROI(m, n, camera_width * 2, camera_height * 2);
+			cv::Rect ROI(camera_width, camera_height, camera_width * 2, camera_height * 2);
 			mainImage.copyTo(DispImage(ROI));
 		}
 		// Add processing pictures 
-		else 
-		{
+		else {
 			// image is not of type CV_8UC3, convert it 
 			cvtColor(temp, image, cv::COLOR_GRAY2RGB);
-			// Used to align images, first two rows 
-			if(i == 1 || i == 2) {
-				m = camera_width * 2;
-				if (i == 2) {
-					n += (camera_height);
-				}
+			// Used to align images
+			if(i == 3 || i == 4) {
+				m = 0;
+				n += (camera_height);
 			}
-			// last row 
 			else if(i % cols == 0 && m != 0) {
 				m = 0;
 				n += (camera_height);		
