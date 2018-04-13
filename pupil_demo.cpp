@@ -111,13 +111,13 @@ int main(int argc, char** argv)
     occulography.set(CV_CAP_PROP_CONVERT_RGB, CAMERA_CONVERT_RGB);
 
     // intialize the display window if necessary
-    if(displayMode)
+   /* if(displayMode)
     {
         cvNamedWindow("eyeImage", CV_WINDOW_NORMAL);
         cvSetWindowProperty("eyeImage", CV_WND_PROP_FULLSCREEN, CV_WINDOW_NORMAL);
         cvSetWindowProperty("eyeImage", CV_WND_PROP_AUTOSIZE, CV_WINDOW_NORMAL);
         cvSetWindowProperty("eyeImage", CV_WND_PROP_ASPECTRATIO, CV_WINDOW_KEEPRATIO);
-    }
+    }*/
 	
     // create the pupil tracking object
     PupilTracker tracker;
@@ -145,10 +145,14 @@ int main(int argc, char** argv)
 
         // attempt to acquire an image frame
         if(occulography.read(eyeImage))
-        {
+        {	
+		
+			cv::Mat t;
+			resize(eyeImage, t, cv::Size(640, 360));
+
             // process the image frame
             processStartTicks = clock();
-            bool trackingSuccess = tracker.findPupil(eyeImage);
+            bool trackingSuccess = tracker.findPupil(t);
             processEndTicks = clock();
             processTime = ((float)(processEndTicks - processStartTicks)) / CLOCKS_PER_SEC;
 
@@ -161,7 +165,7 @@ int main(int argc, char** argv)
             // update the display
             if(displayMode)
             {
-                cv::Mat displayImage(eyeImage);
+                cv::Mat displayImage(t);
 
                 // annotate the image if tracking was successful
                 if(trackingSuccess)
@@ -170,7 +174,7 @@ int main(int argc, char** argv)
                     cv::ellipse(displayImage, tracker.getEllipseRectangle(), COLOR_RED);
 
                     // shade the pupil area
-                    cv::Mat annotation(eyeImage.rows, eyeImage.cols, CV_8UC3, 0.0);
+                    cv::Mat annotation(t.rows, t.cols, CV_8UC3, 0.0);
                     cv::ellipse(annotation, tracker.getEllipseRectangle(), COLOR_MAGENTA, -1);
                     const double alpha = 0.7;
                     cv::addWeighted(displayImage, alpha, annotation, 1.0 - alpha, 0.0, displayImage);

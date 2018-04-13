@@ -265,8 +265,8 @@ cv::RotatedRect PupilTracker::getEllipseRectangle()
 ***********************************************************************************************************************/
 void PupilTracker::setDisplay(bool display)
 {
-    m_display = display;
-	//m_display = false;
+    //m_display = display;
+	m_display = false;
 }
 
 void PupilTracker::setMaskImage(const cv::Mat& maskIn)
